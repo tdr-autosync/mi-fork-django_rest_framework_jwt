@@ -73,7 +73,7 @@
                 
                     <li><a class="toctree-l4" href="#additional-settings">Additional Settings</a></li>
                 
-                    <li><a class="toctree-l4" href="#extending-jsonwebtokenauthentication">Extending JSONWebTokenAuthentication</a></li>
+                    <li><a class="toctree-l4" href="#extendingoverriding-jsonwebtokenauthentication">Extending/Overriding JSONWebTokenAuthentication</a></li>
                 
                     <li><a class="toctree-l4" href="#creating-a-new-token-manually">Creating a new token manually</a></li>
                 
@@ -182,8 +182,8 @@ urlpatterns = [
 <pre><code class="bash">$ curl -X POST -H &quot;Content-Type: application/json&quot; -d '{&quot;username&quot;:&quot;admin&quot;,&quot;password&quot;:&quot;password123&quot;}' http://localhost:8000/api-token-auth/
 </code></pre>
 
-<p>Now in order to access protected api urls you must include the <code>Authorization: JWT &lt;your_token&gt;</code> header.</p>
-<pre><code class="bash">$ curl -H &quot;Authorization: JWT &lt;your_token&gt;&quot; http://localhost:8000/protected-url/
+<p>Now in order to access protected api urls you must include the <code>Authorization: Bearer &lt;your_token&gt;</code> header.</p>
+<pre><code class="bash">$ curl -H &quot;Authorization: Bearer &lt;your_token&gt;&quot; http://localhost:8000/protected-url/
 </code></pre>
 
 <h2 id="refresh-token">Refresh Token</h2>
@@ -223,39 +223,31 @@ urlpatterns = [
 <h2 id="additional-settings">Additional Settings</h2>
 <p>There are some additional settings that you can override similar to how you'd do it with Django REST framework itself. Here are all the available defaults.</p>
 <pre><code class="python">JWT_AUTH = {
-    'JWT_ENCODE_HANDLER':
-    'rest_framework_jwt.utils.jwt_encode_handler',
-
-    'JWT_DECODE_HANDLER':
-    'rest_framework_jwt.utils.jwt_decode_handler',
-
-    'JWT_PAYLOAD_HANDLER':
-    'rest_framework_jwt.utils.jwt_payload_handler',
-
-    'JWT_PAYLOAD_GET_USER_ID_HANDLER':
-    'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler',
-
-    'JWT_RESPONSE_PAYLOAD_HANDLER':
-    'rest_framework_jwt.utils.jwt_response_payload_handler',
-
     'JWT_SECRET_KEY': settings.SECRET_KEY,
     'JWT_GET_USER_SECRET_KEY': None,
-    'JWT_PUBLIC_KEY': None,
     'JWT_PRIVATE_KEY': None,
+    'JWT_PUBLIC_KEY': None,
     'JWT_ALGORITHM': 'HS256',
+    'JWT_AUDIENCE': None,
+    'JWT_ISSUER': None,
+    'JWT_ENCODE_HANDLER':
+        'rest_framework_jwt.utils.jwt_encode_payload',
+    'JWT_DECODE_HANDLER':
+        'rest_framework_jwt.utils.jwt_decode_token',
+    'JWT_PAYLOAD_HANDLER':
+        'rest_framework_jwt.utils.jwt_create_payload',
+    'JWT_PAYLOAD_GET_USERNAME_HANDLER':
+        'rest_framework_jwt.utils.jwt_get_username_from_payload_handler',
     'JWT_VERIFY': True,
     'JWT_VERIFY_EXPIRATION': True,
     'JWT_LEEWAY': 0,
     'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=300),
-    'JWT_AUDIENCE': None,
-    'JWT_ISSUER': None,
-
-    'JWT_ALLOW_REFRESH': False,
+    'JWT_ALLOW_REFRESH': True,
     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
-
-    'JWT_AUTH_HEADER_PREFIX': 'JWT',
-    'JWT_AUTH_COOKIE': None,
-
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    'JWT_RESPONSE_PAYLOAD_HANDLER':
+        'rest_framework_jwt.utils.jwt_create_response_payload',
+    'JWT_AUTH_COOKIE': None
 }
 </code></pre>
 
@@ -265,19 +257,33 @@ urlpatterns = [
 <p>Default is your project's <code>settings.SECRET_KEY</code>.</p>
 <h3 id="jwt_get_user_secret_key">JWT_GET_USER_SECRET_KEY</h3>
 <p>This is more robust version of JWT_SECRET_KEY. It is defined per User, so in case token is compromised it can be
-easily changed by owner. Changing this value will make all tokens for given user unusable. Value should be a function, accepting user as only parameter and returning it's secret key.</p>
-<p>Default is <code>None</code>.</p>
-<h3 id="jwt_public_key">JWT_PUBLIC_KEY</h3>
-<p>This is an object of type <code>cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey</code>. It will be used to verify the signature of the incoming JWT. Will override <code>JWT_SECRET_KEY</code> when set. Read the <a href="https://cryptography.io/en/latest/hazmat/primitives/asymmetric/rsa/#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey">documentation</a> for more details. Please note that <code>JWT_ALGORITHM</code> must be set to one of <code>RS256</code>, <code>RS384</code>, or <code>RS512</code>.</p>
+easily changed by owner. Changing this value will make all tokens for given user unusable. Value should be a function, accepting user as only parameter and returning it's secret key as string.</p>
 <p>Default is <code>None</code>.</p>
 <h3 id="jwt_private_key">JWT_PRIVATE_KEY</h3>
 <p>This is an object of type <code>cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey</code>. It will be used to sign the signature component of the JWT. Will override <code>JWT_SECRET_KEY</code> when set. Read the <a href="https://cryptography.io/en/latest/hazmat/primitives/asymmetric/rsa/#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey">documentation</a> for more details. Please note that <code>JWT_ALGORITHM</code> must be set to one of <code>RS256</code>, <code>RS384</code>, or <code>RS512</code>.</p>
 <p>Default is <code>None</code>.</p>
+<h3 id="jwt_public_key">JWT_PUBLIC_KEY</h3>
+<p>This is an object of type <code>cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey</code>. It will be used to verify the signature of the incoming JWT. Will override <code>JWT_SECRET_KEY</code> when set. Read the <a href="https://cryptography.io/en/latest/hazmat/primitives/asymmetric/rsa/#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey">documentation</a> for more details. Please note that <code>JWT_ALGORITHM</code> must be set to one of <code>RS256</code>, <code>RS384</code>, or <code>RS512</code>.</p>
+<p>Default is <code>None</code>.</p>
 <h3 id="jwt_algorithm">JWT_ALGORITHM</h3>
-<p>Possible values are any of the <a href="https://github.com/jpadilla/pyjwt#algorithms">supported algorithms</a> for cryptographic signing in PyJWT.</p>
+<p>Possible values are any of the <a href="https://github.com/jpadilla/pyjwt#algorithms">supported algorithms</a> for cryptographic signing in <code>PyJWT</code>.</p>
 <p>Default is <code>"HS256"</code>.</p>
+<h3 id="jwt_audience">JWT_AUDIENCE</h3>
+<p>This is a string that will be checked against the <code>aud</code> field of the token, if present.</p>
+<p>Default is <code>None</code> (fail if <code>aud</code> present on JWT).</p>
+<h3 id="jwt_issuer">JWT_ISSUER</h3>
+<p>This is a string that will be checked against the <code>iss</code> field of the token.</p>
+<p>Default is <code>None</code> (do not check <code>iss</code> on JWT).</p>
+<h3 id="jwt_encode_handler">JWT_ENCODE_HANDLER</h3>
+<p>Encodes JWT payload data and returns JWT token.</p>
+<h3 id="jwt_decode_handler">JWT_DECODE_HANDLER</h3>
+<p>Decodes JWT token and returns JWT payload data.</p>
+<h3 id="jwt_payload_handler">JWT_PAYLOAD_HANDLER</h3>
+<p>Specify a custom function to generate the token payload</p>
+<h3 id="jwt_payload_get_username_handler">JWT_PAYLOAD_GET_USERNAME_HANDLER</h3>
+<p>If you store <code>username</code> differently than the default payload handler does, implement this function to fetch <code>username</code> from the payload.</p>
 <h3 id="jwt_verify">JWT_VERIFY</h3>
-<p>If the secret is wrong, it will raise a jwt.DecodeError telling you as such. You can still get at the payload by setting the <code>JWT_VERIFY</code> to <code>False</code>.</p>
+<p>If the secret is wrong, it will raise a <code>jwt.DecodeError</code>. You can still get the payload by setting the <code>JWT_VERIFY</code> to <code>False</code>.</p>
 <p>Default is <code>True</code>.</p>
 <h3 id="jwt_verify_expiration">JWT_VERIFY_EXPIRATION</h3>
 <p>You can turn off expiration time verification by setting <code>JWT_VERIFY_EXPIRATION</code> to <code>False</code>.
@@ -288,54 +294,54 @@ Without expiration verification, JWTs will last forever meaning a leaked token c
 <p>Default is <code>0</code> seconds.</p>
 <h3 id="jwt_expiration_delta">JWT_EXPIRATION_DELTA</h3>
 <p>This is an instance of Python's <code>datetime.timedelta</code>. This will be added to <code>datetime.utcnow()</code> to set the expiration time.</p>
-<p>Default is <code>datetime.timedelta(seconds=300)</code>(5 minutes).</p>
-<h3 id="jwt_audience">JWT_AUDIENCE</h3>
-<p>This is a string that will be checked against the <code>aud</code> field of the token, if present.</p>
-<p>Default is <code>None</code>(fail if <code>aud</code> present on JWT).</p>
-<h3 id="jwt_issuer">JWT_ISSUER</h3>
-<p>This is a string that will be checked against the <code>iss</code> field of the token.</p>
-<p>Default is <code>None</code>(do not check <code>iss</code> on JWT).</p>
+<p>Default is <code>datetime.timedelta(seconds=300)</code> (5 minutes).</p>
 <h3 id="jwt_allow_refresh">JWT_ALLOW_REFRESH</h3>
-<p>Enable token refresh functionality. Token issued from <code>rest_framework_jwt.views.obtain_jwt_token</code> will have an <code>orig_iat</code> field. Default is <code>False</code></p>
+<p>Enable token refresh functionality. Token issued from <code>rest_framework_jwt.views.obtain_jwt_token</code> will have an <code>orig_iat</code> field. </p>
+<p>Default is <code>True</code>.</p>
 <h3 id="jwt_refresh_expiration_delta">JWT_REFRESH_EXPIRATION_DELTA</h3>
 <p>Limit on token refresh, is a <code>datetime.timedelta</code> instance. This is how much time after the original token that future tokens can be refreshed from.</p>
 <p>Default is <code>datetime.timedelta(days=7)</code> (7 days).</p>
-<h3 id="jwt_payload_handler">JWT_PAYLOAD_HANDLER</h3>
-<p>Specify a custom function to generate the token payload</p>
-<h3 id="jwt_payload_get_user_id_handler">JWT_PAYLOAD_GET_USER_ID_HANDLER</h3>
-<p>If you store <code>user_id</code> differently than the default payload handler does, implement this function to fetch <code>user_id</code> from the payload. <strong>Note:</strong> Will be deprecated in favor of <code>JWT_PAYLOAD_GET_USERNAME_HANDLER</code>.</p>
-<h3 id="jwt_payload_get_username_handler">JWT_PAYLOAD_GET_USERNAME_HANDLER</h3>
-<p>If you store <code>username</code> differently than the default payload handler does, implement this function to fetch <code>username</code> from the payload.</p>
+<h3 id="jwt_auth_header_prefix">JWT_AUTH_HEADER_PREFIX</h3>
+<p>You can modify the Authorization header value prefix that is required to be sent together with the token. </p>
+<p>Default value is <code>Bearer</code>.</p>
 <h3 id="jwt_response_payload_handler">JWT_RESPONSE_PAYLOAD_HANDLER</h3>
-<p>Responsible for controlling the response data returned after login or refresh. Override to return a custom response such as including the serialized representation of the User.</p>
-<p>Defaults to return the JWT token.</p>
+<p>Creates a response payload instance that will get passed to authentication response serializer.
+You might want to implement your own handler if you use custom response serializer (typical use-case would be including serialized <code>user</code> object in response).</p>
+<p>By default returns a <code>namedtuple</code> with attributes <code>pk</code> (issued-at time) and <code>token</code>.</p>
 <p>Example:</p>
-<pre><code>def jwt_response_payload_handler(token, user=None, request=None):
-    return {
-        'token': token,
-        'user': UserSerializer(user, context={'request': request}).data
-    }
+<pre><code>def jwt_create_response_payload(token, user=None, request=None, issued_at=None):
+    &quot;&quot;&quot;
+    Return data ready to be passed to serializer.
+
+    Override this function if you need to include any additional data for
+    serializer.
+
+    Note that we are using `pk` field here - this is for forward compatibility
+    with drf add-ons that might require `pk` field in order (eg. jsonapi).
+    &quot;&quot;&quot;
+
+    response_payload = namedtuple('ResponsePayload', 'pk token user')
+    response_payload.pk = issued_at
+    response_payload.token = token
+    response_payload.user = user
+
+    return response_payload
 </code></pre>
 
-<p>Default is <code>{'token': token}</code></p>
-<h3 id="jwt_auth_header_prefix">JWT_AUTH_HEADER_PREFIX</h3>
-<p>You can modify the Authorization header value prefix that is required to be sent together with the token. The default value is <code>JWT</code>. This decision was introduced in PR <a href="https://github.com/GetBlimp/django-rest-framework-jwt/pull/4">#4</a> to allow using both this package and OAuth2 in DRF.</p>
-<p>Another common value used for tokens and Authorization headers is <code>Bearer</code>.</p>
-<p>Default is <code>JWT</code>.</p>
 <h3 id="jwt_auth_cookie">JWT_AUTH_COOKIE</h3>
 <p>You can set this to a string if you want to use http cookies in addition to the Authorization header as a valid transport for the token.
 The string you set here will be used as the cookie name that will be set in the response headers when requesting a token. The token validation
 procedure will also look into this cookie, if set. The 'Authorization' header takes precedence if both the header and the cookie are present in the request.</p>
 <p>Default is <code>None</code> and no cookie is set when creating tokens nor accepted when validating them.</p>
-<h2 id="extending-jsonwebtokenauthentication">Extending <code>JSONWebTokenAuthentication</code></h2>
+<h2 id="extendingoverriding-jsonwebtokenauthentication">Extending/Overriding <code>JSONWebTokenAuthentication</code></h2>
 <p>Right now <code>JSONWebTokenAuthentication</code> assumes that the JWT will come in the header, or a cookie if configured (see <a href="#JWT_AUTH_COOKIE">JWT_AUTH_COOKIE</a>). The JWT spec does not require this (see: <a href="https://developer.atlassian.com/static/connect/docs/concepts/authentication.html">Making a service Call</a>). For example, the JWT may come in the querystring. The ability to send the JWT in the querystring is needed in cases where the user cannot set the header (for example the src element in HTML).</p>
-<p>To achieve this functionality, the user might write a custom <code>Authentication</code>:</p>
-<pre><code class="python">class JSONWebTokenAuthenticationQS(BaseJSONWebTokenAuthentication):
+<p>To achieve this functionality, the user might write a custom <code>Authentication</code> class:</p>
+<pre><code class="python">class JSONWebTokenAuthenticationQS(JSONWebTokenAuthentication):
+
     def get_jwt_value(self, request):
-         return request.QUERY_PARAMS.get('jwt')
+        return request.QUERY_PARAMS.get('jwt')
 </code></pre>
 
-<p>It is recommended to use <code>BaseJSONWebTokenAuthentication</code>, a new base class with no logic around parsing the HTTP headers.</p>
 <h2 id="creating-a-new-token-manually">Creating a new token manually</h2>
 <p>Sometimes you may want to manually generate a token, for example to return a token to the user immediately after account creation. You can do this as follows:</p>
 <pre><code class="python">from rest_framework_jwt.settings import api_settings
@@ -385,5 +391,5 @@ token = jwt_encode_handler(payload)
 
 <!--
 MkDocs version : 0.13.2
-Build Date UTC : 2018-12-14 10:09:15.778792
+Build Date UTC : 2018-12-21 14:19:02.103198
 -->
