@@ -3,31 +3,29 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="JSON Web Token Authentication support for Django REST Framework">
   
-  <title>Django REST framework JWT</title>
-  
-
-  <link rel="shortcut icon" href="./img/favicon.ico">
-
-  
+  <link rel="shortcut icon" href="img/favicon.ico">
+  <title>REST framework JWT Auth - Django REST framework JWT</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
-  <link rel="stylesheet" href="./css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="./css/theme_extra.css" type="text/css" />
-  <link rel="stylesheet" href="./css/highlight.css">
-
+  <link rel="stylesheet" href="css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
   
   <script>
     // Current page data
-    var mkdocs_page_name = "index"
+    var mkdocs_page_name = "REST framework JWT Auth";
+    var mkdocs_page_input_path = "index.md";
+    var mkdocs_page_url = null;
   </script>
   
-  <script src="./js/jquery-2.1.1.min.js"></script>
-  <script src="./js/modernizr-2.8.3.min.js"></script>
-  <script type="text/javascript" src="./js/highlight.pack.js"></script>
-  <script src="./js/theme.js"></script> 
-
+  <script src="js/jquery-2.1.1.min.js" defer></script>
+  <script src="js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
   
 </head>
 
@@ -41,47 +39,53 @@
         <a href="." class="icon icon-home"> Django REST framework JWT</a>
         <div role="search">
   <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-        <ul class="current">
+	<ul class="current">
+	  
           
-            <li>
-    <li class="toctree-l1 current">
-        <a class="current" href=".">Home</a>
-        
-            <ul>
+            <li class="toctree-l1 current">
+		
+    <a class="current" href=".">REST framework JWT Auth</a>
+    <ul class="subnav">
             
-                <li class="toctree-l3"><a href="#rest-framework-jwt-auth">REST framework JWT Auth</a></li>
-                
-                    <li><a class="toctree-l4" href="#overview">Overview</a></li>
-                
-                    <li><a class="toctree-l4" href="#requirements">Requirements</a></li>
-                
-                    <li><a class="toctree-l4" href="#security">Security</a></li>
-                
-                    <li><a class="toctree-l4" href="#installation">Installation</a></li>
-                
-                    <li><a class="toctree-l4" href="#usage">Usage</a></li>
-                
-                    <li><a class="toctree-l4" href="#refresh-token">Refresh Token</a></li>
-                
-                    <li><a class="toctree-l4" href="#verify-token">Verify Token</a></li>
-                
-                    <li><a class="toctree-l4" href="#additional-settings">Additional Settings</a></li>
-                
-                    <li><a class="toctree-l4" href="#extendingoverriding-jsonwebtokenauthentication">Extending/Overriding JSONWebTokenAuthentication</a></li>
-                
-                    <li><a class="toctree-l4" href="#creating-a-new-token-manually">Creating a new token manually</a></li>
-                
-            
-            </ul>
+    <li class="toctree-l2"><a href="#rest-framework-jwt-auth">REST framework JWT Auth</a></li>
+    
+        <ul>
         
-    </li>
-<li>
+            <li><a class="toctree-l3" href="#overview">Overview</a></li>
+        
+            <li><a class="toctree-l3" href="#requirements">Requirements</a></li>
+        
+            <li><a class="toctree-l3" href="#security">Security</a></li>
+        
+            <li><a class="toctree-l3" href="#installation">Installation</a></li>
+        
+            <li><a class="toctree-l3" href="#usage">Usage</a></li>
+        
+            <li><a class="toctree-l3" href="#refresh-token">Refresh Token</a></li>
+        
+            <li><a class="toctree-l3" href="#verify-token">Verify Token</a></li>
+        
+            <li><a class="toctree-l3" href="#impersonation-token">Impersonation Token</a></li>
+        
+            <li><a class="toctree-l3" href="#blacklisting-tokens">Blacklisting Tokens</a></li>
+        
+            <li><a class="toctree-l3" href="#additional-settings">Additional Settings</a></li>
+        
+            <li><a class="toctree-l3" href="#extendingoverriding-jsonwebtokenauthentication">Extending/Overriding JSONWebTokenAuthentication</a></li>
+        
+            <li><a class="toctree-l3" href="#creating-a-new-token-manually">Creating a new token manually</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
           
         </ul>
       </div>
@@ -105,12 +109,11 @@
     
       
     
-    <li>Home</li>
+    <li>REST framework JWT Auth</li>
     <li class="wy-breadcrumbs-aside">
       
-        
-          <a href="https://github.com/Styria-Digital/django-rest-framework-jwt" class="icon icon-github"> Edit on GitHub</a>
-        
+        <a href="https://github.com/Styria-Digital/django-rest-framework-jwt/edit/master/docs/index.md"
+          class="icon icon-github"> Edit on GitHub</a>
       
     </li>
   </ul>
@@ -131,9 +134,9 @@
 </ul>
 <h2 id="requirements">Requirements</h2>
 <ul>
-<li>Python 2.7, 3.4, 3.5, 3.6</li>
-<li>Django 1.11</li>
-<li>Django REST Framework 3.7.x, 3.8.x</li>
+<li>Python 2.7, 3.4+</li>
+<li>Django 1.11+</li>
+<li>Django REST Framework 3.7+</li>
 </ul>
 <h2 id="security">Security</h2>
 <p>Unlike some more typical uses of JWTs, this module only generates
@@ -220,6 +223,14 @@ urlpatterns = [
 <pre><code class="bash">$ curl -X POST -H &quot;Content-Type: application/json&quot; -d '{&quot;token&quot;:&quot;&lt;EXISTING_TOKEN&gt;&quot;}' http://localhost:8000/api-token-verify/
 </code></pre>
 
+<h2 id="impersonation-token">Impersonation Token</h2>
+<p>Impersonation allows the service to perform actions on the client’s behalf. A typical use case would be troubleshooting. We can act like the user who submitted an issue without requiring its login credentials.</p>
+<p>By default, only superusers (<code>user.is_superuser == True</code>) can impersonate other accounts. If you need to customize the permission handling process, override the <code>ImpersonateJSONWebTokenView</code>'s <a href="https://www.django-rest-framework.org/api-guide/permissions/#setting-the-permission-policy"><code>permission_classes</code> attribute</a>. </p>
+<h2 id="blacklisting-tokens">Blacklisting Tokens</h2>
+<p>Blacklisting allows users to blacklist their own token from the HTTP header or cookies. General
+ use case is as a logout service.</p>
+<h3 id="delete_stale_tokens-management-command"><code>delete_stale_tokens</code> management command</h3>
+<p>When called, deletes all blacklisted tokens that have expired.</p>
 <h2 id="additional-settings">Additional Settings</h2>
 <p>There are some additional settings that you can override similar to how you'd do it with Django REST framework itself. Here are all the available defaults.</p>
 <pre><code class="python">JWT_AUTH = {
@@ -238,6 +249,7 @@ urlpatterns = [
         'rest_framework_jwt.utils.jwt_create_payload',
     'JWT_PAYLOAD_GET_USERNAME_HANDLER':
         'rest_framework_jwt.utils.jwt_get_username_from_payload_handler',
+    'JWT_PAYLOAD_INCLUDE_USER_ID': True,
     'JWT_VERIFY': True,
     'JWT_VERIFY_EXPIRATION': True,
     'JWT_LEEWAY': 0,
@@ -247,26 +259,32 @@ urlpatterns = [
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
     'JWT_RESPONSE_PAYLOAD_HANDLER':
         'rest_framework_jwt.utils.jwt_create_response_payload',
-    'JWT_AUTH_COOKIE': None
+    'JWT_AUTH_COOKIE': None,
+    'JWT_AUTH_COOKIE_DOMAIN': None,
+    'JWT_AUTH_COOKIE_PATH': '/',
+    'JWT_AUTH_COOKIE_SECURE': True,
+    'JWT_AUTH_COOKIE_SAMESITE': 'Lax',
+    'JWT_IMPERSONATION_COOKIE': None,
+    'JWT_DELETE_STALE_BLACKLISTED_TOKENS': False,
 }
 </code></pre>
 
-<p>This packages uses the JSON Web Token Python implementation, <a href="https://github.com/jpadilla/pyjwt">PyJWT</a> and allows to modify some of it's available options.</p>
+<p>This package uses the JSON Web Token Python implementation, <a href="https://github.com/jpadilla/pyjwt">PyJWT</a> and allows to modify some of its available options.</p>
 <h3 id="jwt_secret_key">JWT_SECRET_KEY</h3>
 <p>This is the secret key used to sign the JWT. Make sure this is safe and not shared or public.</p>
 <p>Default is your project's <code>settings.SECRET_KEY</code>.</p>
 <h3 id="jwt_get_user_secret_key">JWT_GET_USER_SECRET_KEY</h3>
 <p>This is more robust version of JWT_SECRET_KEY. It is defined per User, so in case token is compromised it can be
-easily changed by owner. Changing this value will make all tokens for given user unusable. Value should be a function, accepting user as only parameter and returning it's secret key as string.</p>
+easily changed by owner. Changing this value will make all tokens for given user unusable. Value should be a function, accepting user as the only parameter and returning its secret key as string.</p>
 <p>Default is <code>None</code>.</p>
 <h3 id="jwt_private_key">JWT_PRIVATE_KEY</h3>
-<p>This is an object of type <code>cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey</code>. It will be used to sign the signature component of the JWT. Will override <code>JWT_SECRET_KEY</code> when set. Read the <a href="https://cryptography.io/en/latest/hazmat/primitives/asymmetric/rsa/#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey">documentation</a> for more details. Please note that <code>JWT_ALGORITHM</code> must be set to one of <code>RS256</code>, <code>RS384</code>, or <code>RS512</code>.</p>
+<p>This is an object of type <code>cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey</code>. It will be used to sign the signature component of the JWT. It will override <code>JWT_SECRET_KEY</code> when set. Read the <a href="https://cryptography.io/en/latest/hazmat/primitives/asymmetric/rsa/#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey">documentation</a> for more details. Please note that <code>JWT_ALGORITHM</code> must be set to one of <code>RS256</code>, <code>RS384</code>, or <code>RS512</code>.</p>
 <p>Default is <code>None</code>.</p>
 <h3 id="jwt_public_key">JWT_PUBLIC_KEY</h3>
-<p>This is an object of type <code>cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey</code>. It will be used to verify the signature of the incoming JWT. Will override <code>JWT_SECRET_KEY</code> when set. Read the <a href="https://cryptography.io/en/latest/hazmat/primitives/asymmetric/rsa/#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey">documentation</a> for more details. Please note that <code>JWT_ALGORITHM</code> must be set to one of <code>RS256</code>, <code>RS384</code>, or <code>RS512</code>.</p>
+<p>This is an object of type <code>cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey</code>. It will be used to verify the signature of the incoming JWT. It will override <code>JWT_SECRET_KEY</code> when set. Read the <a href="https://cryptography.io/en/latest/hazmat/primitives/asymmetric/rsa/#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey">documentation</a> for more details. Please note that <code>JWT_ALGORITHM</code> must be set to one of <code>RS256</code>, <code>RS384</code>, or <code>RS512</code>.</p>
 <p>Default is <code>None</code>.</p>
 <h3 id="jwt_algorithm">JWT_ALGORITHM</h3>
-<p>Possible values are any of the <a href="https://github.com/jpadilla/pyjwt#algorithms">supported algorithms</a> for cryptographic signing in <code>PyJWT</code>.</p>
+<p>Possible values are any of the <a href="https://github.com/jpadilla/pyjwt/blob/master/docs/algorithms.rst">supported algorithms</a> for cryptographic signing in <code>PyJWT</code>.</p>
 <p>Default is <code>"HS256"</code>.</p>
 <h3 id="jwt_audience">JWT_AUDIENCE</h3>
 <p>This is a string that will be checked against the <code>aud</code> field of the token, if present.</p>
@@ -282,6 +300,9 @@ easily changed by owner. Changing this value will make all tokens for given user
 <p>Specify a custom function to generate the token payload</p>
 <h3 id="jwt_payload_get_username_handler">JWT_PAYLOAD_GET_USERNAME_HANDLER</h3>
 <p>If you store <code>username</code> differently than the default payload handler does, implement this function to fetch <code>username</code> from the payload.</p>
+<h3 id="jwt_payload_include_user_id">JWT_PAYLOAD_INCLUDE_USER_ID</h3>
+<p>If you do not wish to include the user's primary key (typically <code>id</code>) in the token payload, then set this to <code>False</code>.</p>
+<p>Default is <code>True</code>.</p>
 <h3 id="jwt_verify">JWT_VERIFY</h3>
 <p>If the secret is wrong, it will raise a <code>jwt.DecodeError</code>. You can still get the payload by setting the <code>JWT_VERIFY</code> to <code>False</code>.</p>
 <p>Default is <code>True</code>.</p>
@@ -296,13 +317,13 @@ Without expiration verification, JWTs will last forever meaning a leaked token c
 <p>This is an instance of Python's <code>datetime.timedelta</code>. This will be added to <code>datetime.utcnow()</code> to set the expiration time.</p>
 <p>Default is <code>datetime.timedelta(seconds=300)</code> (5 minutes).</p>
 <h3 id="jwt_allow_refresh">JWT_ALLOW_REFRESH</h3>
-<p>Enable token refresh functionality. Token issued from <code>rest_framework_jwt.views.obtain_jwt_token</code> will have an <code>orig_iat</code> field. </p>
+<p>Enable token refresh functionality. Token issued from <code>rest_framework_jwt.views.obtain_jwt_token</code> will have an <code>orig_iat</code> field.</p>
 <p>Default is <code>True</code>.</p>
 <h3 id="jwt_refresh_expiration_delta">JWT_REFRESH_EXPIRATION_DELTA</h3>
 <p>Limit on token refresh, is a <code>datetime.timedelta</code> instance. This is how much time after the original token that future tokens can be refreshed from.</p>
 <p>Default is <code>datetime.timedelta(days=7)</code> (7 days).</p>
 <h3 id="jwt_auth_header_prefix">JWT_AUTH_HEADER_PREFIX</h3>
-<p>You can modify the Authorization header value prefix that is required to be sent together with the token. </p>
+<p>You can modify the Authorization header value prefix that is required to be sent together with the token.</p>
 <p>Default value is <code>Bearer</code>.</p>
 <h3 id="jwt_response_payload_handler">JWT_RESPONSE_PAYLOAD_HANDLER</h3>
 <p>Creates a response payload instance that will get passed to authentication response serializer.
@@ -333,6 +354,37 @@ You might want to implement your own handler if you use custom response serializ
 The string you set here will be used as the cookie name that will be set in the response headers when requesting a token. The token validation
 procedure will also look into this cookie, if set. The 'Authorization' header takes precedence if both the header and the cookie are present in the request.</p>
 <p>Default is <code>None</code> and no cookie is set when creating tokens nor accepted when validating them.</p>
+<h3 id="jwt_auth_cookie_domain">JWT_AUTH_COOKIE_DOMAIN</h3>
+<p>Default: <code>None</code></p>
+<p>The domain to use for the JWT cookie analogous to
+<code>SESSION_COOKIE_DOMAIN</code> for django sessions.</p>
+<p>Has no effect unless JWT_AUTH_COOKIE is set.</p>
+<h3 id="jwt_auth_cookie_path">JWT_AUTH_COOKIE_PATH</h3>
+<p>Default: <code>/</code></p>
+<p>The path to set on the JWT cookie analogous to <code>SESSION_COOKIE_PATH</code>
+for django sessions.</p>
+<p>Has no effect unless JWT_AUTH_COOKIE is set.</p>
+<h3 id="jwt_auth_cookie_secure">JWT_AUTH_COOKIE_SECURE</h3>
+<p>Default: <code>True</code></p>
+<p>Whether to use a secure cookie for the JWT cookie analogous to
+<code>SESSION_COOKIE_SECURE</code> for django sessions.</p>
+<p>Users wishing to use JWT cookies over http (as in no TLS/SSL) need to
+set <code>JWT_AUTH_COOKIE_SECURE</code> to <code>False.</code></p>
+<p>Has no effect unless JWT_AUTH_COOKIE is set.</p>
+<h3 id="jwt_auth_cookie_samesite">JWT_AUTH_COOKIE_SAMESITE</h3>
+<p>Default: <code>Lax</code></p>
+<p>The value of the <code>SameSite</code> flag on the the JWT cookie analogous to
+<code>SESSION_COOKIE_SAMESITE</code> for django sessions.</p>
+<p>Has no effect unless JWT_AUTH_COOKIE is set.</p>
+<p>Has no effect with Django versions before 2.1.</p>
+<h3 id="jwt_impersonation_cookie">JWT_IMPERSONATION_COOKIE</h3>
+<p>Analogous to the <code>JWT_AUTH_COOKIE</code> setting, but contains the impersonation token, i.e. the token of the user who is being impersonated.</p>
+<p>This cookie takes precedence over the <code>JWT_AUTH_COOKIE</code>. If you have both cookies and you want to end the impersonation, you have to remove the cookie. </p>
+<p>Impersonation cookies use the <code>JWT_AUTH_COOKIE_*</code> settings.</p>
+<h3 id="jwt_delete_stale_blacklisted_tokens">JWT_DELETE_STALE_BLACKLISTED_TOKENS</h3>
+<p>Enables deleting of stale blacklisted tokens on <code>post_save</code> when set to <code>True</code>. All blacklisted
+ tokens that have expired will be deleted.</p>
+<p>Default is <code>False</code>.</p>
 <h2 id="extendingoverriding-jsonwebtokenauthentication">Extending/Overriding <code>JSONWebTokenAuthentication</code></h2>
 <p>Right now <code>JSONWebTokenAuthentication</code> assumes that the JWT will come in the header, or a cookie if configured (see <a href="#JWT_AUTH_COOKIE">JWT_AUTH_COOKIE</a>). The JWT spec does not require this (see: <a href="https://developer.atlassian.com/static/connect/docs/concepts/authentication.html">Making a service Call</a>). For example, the JWT may come in the querystring. The ability to send the JWT in the querystring is needed in cases where the user cannot set the header (for example the src element in HTML).</p>
 <p>To achieve this functionality, the user might write a custom <code>Authentication</code> class:</p>
@@ -361,14 +413,13 @@ token = jwt_encode_handler(payload)
   <hr/>
 
   <div role="contentinfo">
-    <p>
     <!-- Copyright etc -->
-    </p>
+    
   </div>
 
   Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
-	  
+      
         </div>
       </div>
 
@@ -376,20 +427,23 @@ token = jwt_encode_handler(payload)
 
   </div>
 
-<div class="rst-versions" role="note" style="cursor: pointer">
+  <div class="rst-versions" role="note" style="cursor: pointer">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
-          <a class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+          <a href="https://github.com/Styria-Digital/django-rest-framework-jwt/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
       
     </span>
 </div>
+    <script>var base_url = '.';</script>
+    <script src="js/theme.js" defer></script>
+      <script src="search/main.js" defer></script>
 
 </body>
 </html>
 
 <!--
-MkDocs version : 0.13.2
-Build Date UTC : 2018-12-21 14:19:02.103198
+MkDocs version : 1.0.4
+Build Date UTC : 2020-02-19 15:13:34
 -->
