@@ -273,20 +273,91 @@ urlpatterns = [
 <p>This package uses the JSON Web Token Python implementation, <a href="https://github.com/jpadilla/pyjwt">PyJWT</a> and allows to modify some of its available options.</p>
 <h3 id="jwt_secret_key">JWT_SECRET_KEY</h3>
 <p>This is the secret key used to sign the JWT. Make sure this is safe and not shared or public.</p>
+<p>Can be a dict, a list or a scalar.</p>
+<ul>
+<li>When a dict, the dict keys are taken as the JWT key ids and the values as
+  keys, e.g.:</li>
+</ul>
+<p><code>python
+  { "kid1": key1, "kid2": key2, ... }</code></p>
+<p>The first element is used for signing.</p>
+<p>If a JWT to be verified contains a key id (<code>kid</code> header), only the
+  key with that id is tried (if any).</p>
+<p><em>NOTE: For python &lt; 3.7, use a <code>collections.OrderedDict</code> object</em>, e.g.:</p>
+<pre><code>```python
+from collections import OrderedDict
+
+JWT_AUTH["JWT_SECRET_KEY"] = OrderedDict(kid1=key1, kid2=key2, ...)
+```
+</code></pre>
+<ul>
+<li>
+<p>When a list, all elements are accepted for verification and the
+  first element is used for signing.</p>
+</li>
+<li>
+<p>When a scalar, this secret is used for signing and verification.</p>
+</li>
+</ul>
+<p>(The first) <code>JWT_SECRET_KEY</code> is only used for signing if (the first)
+<code>JWT_ALGORITHM</code> is <code>HS*</code>, otherwise <code>JWT_PRIVATE_KEY</code> is used.</p>
+<p><code>JWT_SECRET_KEY</code>(s) is/are only used for verification of JWTs with
+<code>alg</code> matching <code>HS*</code></p>
 <p>Default is your project's <code>settings.SECRET_KEY</code>.</p>
 <h3 id="jwt_get_user_secret_key">JWT_GET_USER_SECRET_KEY</h3>
 <p>This is more robust version of JWT_SECRET_KEY. It is defined per User, so in case token is compromised it can be
 easily changed by owner. Changing this value will make all tokens for given user unusable. Value should be a function, accepting user as the only parameter and returning its secret key as string.</p>
 <p>Default is <code>None</code>.</p>
 <h3 id="jwt_private_key">JWT_PRIVATE_KEY</h3>
-<p>This is an object of type <code>cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey</code>. It will be used to sign the signature component of the JWT. It will override <code>JWT_SECRET_KEY</code> when set. Read the <a href="https://cryptography.io/en/latest/hazmat/primitives/asymmetric/rsa/#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey">documentation</a> for more details. Please note that <code>JWT_ALGORITHM</code> must be set to one of <code>RS256</code>, <code>RS384</code>, or <code>RS512</code>.</p>
+<p>Can be a scalar or a dict.</p>
+<p>When a dict, the dict key is taken as the JWT key id and the values as
+the key, e.g.:</p>
+<pre><code class="python">{ &quot;kid&quot;: key }
+</code></pre>
+
+<p>The scalar or the dict value must be in any <a href="https://pyjwt.readthedocs.io/en/latest/algorithms.html">private key format supported by PyJWT</a>, for example of the types</p>
+<ul>
+<li><code>cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey</code></li>
+<li><code>cryptography.hazmat.primitives.asymmetric.ec.EllipticCurvePrivateKey</code></li>
+</ul>
+<p>And will be used to sign the signature component of the JWT if <code>JWT_ALGORITHM</code> is set to any of the <a href="https://pyjwt.readthedocs.io/en/latest/algorithms.html">supported algorithms</a>  other than the hash types <code>HS*</code>.</p>
 <p>Default is <code>None</code>.</p>
 <h3 id="jwt_public_key">JWT_PUBLIC_KEY</h3>
-<p>This is an object of type <code>cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey</code>. It will be used to verify the signature of the incoming JWT. It will override <code>JWT_SECRET_KEY</code> when set. Read the <a href="https://cryptography.io/en/latest/hazmat/primitives/asymmetric/rsa/#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey">documentation</a> for more details. Please note that <code>JWT_ALGORITHM</code> must be set to one of <code>RS256</code>, <code>RS384</code>, or <code>RS512</code>.</p>
+<p>Can be a scalar, a list or a dict.</p>
+<ul>
+<li>When a dict, the dict keys are taken as the JWT key ids and the values as
+  keys, e.g.:</li>
+</ul>
+<p><code>python
+  { "kid1": key1, "kid2": key2, ... }</code></p>
+<p>If a JWT that contains a key id (kid header) is to be verified, only
+  the associated key is tried. Otherwise, or</p>
+<ul>
+<li>when a list, all of the elements will be accepted for verification of JWTs with <code>alg</code> being (any of) <code>JWT_ALGORITHM</code> not matching <code>HS*</code>.</li>
+</ul>
+<p>The scalar or elements/values of the list/dict must be in any <a href="https://pyjwt.readthedocs.io/en/latest/algorithms.html">public key format supported by PyJWT</a>, for example of the types</p>
+<ul>
+<li><code>cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey</code></li>
+<li><code>cryptography.hazmat.primitives.asymmetric.ec.EllipticCurvePublicKey</code></li>
+</ul>
 <p>Default is <code>None</code>.</p>
 <h3 id="jwt_algorithm">JWT_ALGORITHM</h3>
-<p>Possible values are any of the <a href="https://github.com/jpadilla/pyjwt/blob/master/docs/algorithms.rst">supported algorithms</a> for cryptographic signing in <code>PyJWT</code>.</p>
+<p>Possible values are any of the <a href="https://pyjwt.readthedocs.io/en/latest/algorithms.html">supported algorithms</a> for cryptographic signing in <code>PyJWT</code>.</p>
+<p>Can be a scalar or a list.</p>
+<ul>
+<li>
+<p>For a scalar, this algorithm is used for signing and verification.</p>
+</li>
+<li>
+<p>For a list, the first element is used for signing and all elements are accepted for verification.</p>
+</li>
+</ul>
 <p>Default is <code>"HS256"</code>.</p>
+<h3 id="jwt_insist_on_kid">JWT_INSIST_ON_KID</h3>
+<p>When key IDs are used (<code>JWT_SECRET_KEY</code> and/or <code>JWT_PUBLIC_KEY</code> given
+as a dict assigning key IDs to keys), insist that JWTs to be validated
+have a <code>kid</code> header with a defined key.</p>
+<p>Default is <code>False</code>.</p>
 <h3 id="jwt_audience">JWT_AUDIENCE</h3>
 <p>This is a string that will be checked against the <code>aud</code> field of the token, if present.</p>
 <p>Default is <code>None</code> (fail if <code>aud</code> present on JWT).</p>
@@ -444,5 +515,5 @@ token = jwt_encode_handler(payload)
 
 <!--
 MkDocs version : 0.13.2
-Build Date UTC : 2020-03-12 09:34:50.075848
+Build Date UTC : 2020-04-23 10:58:39.548490
 -->
