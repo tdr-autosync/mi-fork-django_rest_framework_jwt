@@ -19,7 +19,6 @@ from rest_framework_jwt.blacklist.exceptions import (
     InvalidAuthorizationHeaderPrefix,
     MissingToken,
 )
-from rest_framework_jwt.blacklist.models import BlacklistedToken
 from rest_framework_jwt.compat import gettext_lazy as _
 from rest_framework_jwt.compat import smart_str
 from rest_framework_jwt.settings import api_settings
@@ -69,6 +68,7 @@ class JSONWebTokenAuthentication(BaseAuthentication):
             return None
 
         if apps.is_installed('rest_framework_jwt.blacklist'):
+            from rest_framework_jwt.blacklist.models import BlacklistedToken
             if BlacklistedToken.objects.filter(token=force_str(token)).exists():
                 msg = _('Token is blacklisted.')
                 raise exceptions.PermissionDenied(msg)
