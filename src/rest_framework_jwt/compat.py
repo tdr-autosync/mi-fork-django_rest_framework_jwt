@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 from datetime import datetime
+import sys
 
 from django import VERSION
 
@@ -21,10 +22,11 @@ except ImportError:
   from django.urls import url
 
 
-try:
-    from django.utils.translation import gettext as gettext_lazy
-except ImportError:
-    from django.utils.translation import ugettext as gettext_lazy
+if sys.version_info[0] == 2:
+    # Use unicode-aware gettext on Python 2
+    from django.utils.translation import ugettext_lazy as gettext_lazy
+else:
+    from django.utils.translation import gettext_lazy as gettext_lazy
 
 
 try:
