@@ -11,7 +11,7 @@ class BlacklistedTokenManager(models.Manager):
 
 
 class BlacklistedToken(models.Model):
-    token = models.TextField(db_index=True, unique=True)
+    token = models.TextField(db_index=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     expires_at = models.DateTimeField(db_index=True)

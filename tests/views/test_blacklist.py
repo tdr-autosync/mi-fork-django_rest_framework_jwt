@@ -13,6 +13,7 @@ from rest_framework.reverse import reverse
 
 from rest_framework_jwt.blacklist.models import BlacklistedToken
 from rest_framework_jwt.settings import api_settings
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 
 def test_anonymous_user_cannot_blacklist_tokens(api_client):
@@ -58,6 +59,21 @@ def test_user_cannot_blacklist_same_token_multiple_times(
     assert response.status_code == status.HTTP_403_FORBIDDEN
     assert BlacklistedToken.objects.count() == 1
 
+def test_create_or_update_blacklist_entry(
+    user, create_authenticated_client
+):
+    url = reverse('blacklist-list')
+    api_client = create_authenticated_client(user)
+
+    # Create a different token to try to blacklist twice
+    payload = JSONWebTokenAuthentication.jwt_create_payload(user)
+    token = JSONWebTokenAuthentication.jwt_encode_payload(payload)
+
+    api_client.post(url, data={"token":token})
+    assert BlacklistedToken.objects.count() == 1
+
+    api_client.post(url, data={"token":token})
+    assert BlacklistedToken.objects.count() == 1
 
 def test_user_can_blacklist_own_token_from_cookie(
     monkeypatch, user, call_auth_endpoint
