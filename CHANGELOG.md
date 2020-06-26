@@ -13,6 +13,21 @@ time.
 
 .. towncrier release notes start
 
+v1.16.1 (2020-06-26)
+====================
+
+Bugfixes
+--------
+
+- Allow use without blacklist app being installed. ([#51](https://github.com/Styria-Digital/django-rest-framework-jwt/pull/51))
+- Fix Python 2 regression in model translations not being unicode
+  aware, and use lazy gettext in the models so they can be imported
+  before the translation system has been is initialised. ([#54](https://github.com/Styria-Digital/django-rest-framework-jwt/pull/54))
+- Use `got_or_create` on blacklist token creation instead of a database
+  uniqueness on the token parameter to make blacklist functionality work
+  on MySQL. ([#58](https://github.com/Styria-Digital/django-rest-framework-jwt/pull/58))
+
+
 1.16.1 (2020-04-30)
 ====================
 
