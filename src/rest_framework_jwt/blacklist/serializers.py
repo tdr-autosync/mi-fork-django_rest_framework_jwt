@@ -25,6 +25,10 @@ class BlacklistTokenSerializer(serializers.ModelSerializer):
         fields = ('token', )
         extra_kwargs = {'token': {'required': False}}
 
+    def create(self, validated_data):
+        token, created = BlacklistedToken.objects.get_or_create(**validated_data)
+        return token
+
     def save(self, **kwargs):
         token = self.validated_data.get('token')
 
