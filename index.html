@@ -152,6 +152,17 @@ replay attacks.</p>
 <pre><code class="bash">$ pip install drf-jwt
 </code></pre>
 
+<p>Add the app to your project:</p>
+<pre><code class="bash">INSTALLED_APPS = [
+    ...
+    'rest_framework_jwt',
+    'rest_framework_jwt.blacklist',
+    ...
+]
+</code></pre>
+
+<p>Note the <em>blacklist</em> app in <code>INSTALLED_APPS</code>. You have to add it even if you dont't use
+ the feature to avoid DB issues.</p>
 <h2 id="usage">Usage</h2>
 <p>In your <code>settings.py</code>, add <code>JSONWebTokenAuthentication</code> to Django REST framework's <code>DEFAULT_AUTHENTICATION_CLASSES</code>.</p>
 <pre><code class="python">REST_FRAMEWORK = {
@@ -230,6 +241,13 @@ urlpatterns = [
 <h2 id="blacklisting-tokens">Blacklisting Tokens</h2>
 <p>Blacklisting allows users to blacklist their own token from the HTTP header or cookies. General
  use case is as a logout service.</p>
+<p>There are two options for blacklisting tokens:
+1. Using <em>Blacklist</em> as a logout service - make a POST request to the <code>BlacklistView</code> and the
+ token will be retrieved from the request.
+2. Blacklisting specific tokens - make a POST request to the <code>BlacklistView</code> with the body</p>
+<pre><code>{'token' : '&lt;token_to_be_blacklisted&gt;'}
+</code></pre>
+
 <h3 id="delete_stale_tokens-management-command"><code>delete_stale_tokens</code> management command</h3>
 <p>When called, deletes all blacklisted tokens that have expired.</p>
 <h2 id="additional-settings">Additional Settings</h2>
@@ -515,5 +533,5 @@ token = jwt_encode_handler(payload)
 
 <!--
 MkDocs version : 0.13.2
-Build Date UTC : 2020-04-23 10:58:39.548490
+Build Date UTC : 2020-07-16 14:38:00.789801
 -->
