@@ -41,9 +41,12 @@ Add the app to your project:
 INSTALLED_APPS = [
     ...
     'rest_framework_jwt',
+    'rest_framework_jwt.blacklist',
     ...
 ]
 ```
+Note the _blacklist_ app in `INSTALLED_APPS`. You have to add it even if you dont't use
+ the feature to avoid DB issues.
 
 ## Usage
 
@@ -148,6 +151,14 @@ By default, only superusers (`user.is_superuser == True`) can impersonate other 
 
 Blacklisting allows users to blacklist their own token from the HTTP header or cookies. General
  use case is as a logout service.
+
+There are two options for blacklisting tokens:
+1. Using _Blacklist_ as a logout service - make a POST request to the `BlacklistView` and the
+ token will be retrieved from the request.
+2. Blacklisting specific tokens - make a POST request to the `BlacklistView` with the body
+```
+{'token' : '<token_to_be_blacklisted>'}
+```
 
 ### `delete_stale_tokens` management command
 
