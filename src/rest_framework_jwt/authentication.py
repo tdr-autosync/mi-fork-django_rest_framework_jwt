@@ -16,7 +16,6 @@ from rest_framework.authentication import (
 
 from rest_framework_jwt.blacklist.exceptions import (
     InvalidAuthorizationCredentials,
-    InvalidAuthorizationHeaderPrefix,
     MissingToken,
 )
 from rest_framework_jwt.compat import gettext_lazy as _
@@ -64,6 +63,8 @@ class JSONWebTokenAuthentication(BaseAuthentication):
         """
         try:
             token = self.get_token_from_request(request)
+            if token is None:
+                return None
         except MissingToken:
             return None
 
@@ -92,8 +93,6 @@ class JSONWebTokenAuthentication(BaseAuthentication):
 
         try:
             return cls.get_token_from_authorization_header(authorization_header)
-        except InvalidAuthorizationHeaderPrefix as error:
-            raise exceptions.AuthenticationFailed(error.msg)
         except InvalidAuthorizationCredentials:
             return cls.get_token_from_cookies(request.COOKIES)
 
@@ -105,7 +104,7 @@ class JSONWebTokenAuthentication(BaseAuthentication):
             raise InvalidAuthorizationCredentials
         else:
             if not cls.prefixes_match(prefix):
-                raise InvalidAuthorizationHeaderPrefix
+                return None
             if not token:
                 raise InvalidAuthorizationCredentials
             return token
