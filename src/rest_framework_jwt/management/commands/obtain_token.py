@@ -1,5 +1,7 @@
 import sys
 
+from rest_framework_jwt.settings import api_settings
+from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 
 
@@ -13,15 +15,13 @@ class Command(BaseCommand):
         sep_index = str(filter_value).find('=')
         if sep_index == -1:
             raise ValueError("'{}' is not a valid filter".format(filter_value))
-        lookup_field, lookup_value = filter_value[0:sep_index], filter_value[sep_index+1:]
+        lookup_field, lookup_value = filter_value[0:sep_index], filter_value[sep_index + 1:]
         return {
             lookup_field: lookup_value
         }
 
     def handle(self, *args, **options):
         try:
-            from rest_framework_jwt.settings import api_settings
-            from django.contrib.auth import get_user_model
             user = get_user_model().objects.filter(**self._parse_filter(options['filter']))
             if len(user) == 0:
                 raise CommandError("There is no user with the given filter")
