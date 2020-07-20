@@ -1,12 +1,13 @@
 import sys
 
+from django.conf import settings
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):
-    help = 'Create new jwt token for the requested user'
+    help = 'Create new jwt token for the requested user during development'
 
     def add_arguments(self, parser):
         parser.add_argument('filter', type=str, help='ex: pk=7 or username=apollo or email=foo@bar')
@@ -22,7 +23,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            user = get_user_model().objects.filter(**self._parse_filter(options['filter']))
+            if getattr(settings, "DEBUG") is False:
+                raise CommandError("obtain_token command requires DEBUG=True ")
+            user = get_user_model().objects.filter(**self._parse_filter(options['filter'])).first()
             if len(user) == 0:
                 raise CommandError("There is no user with the given filter")
             if len(user) > 1:
