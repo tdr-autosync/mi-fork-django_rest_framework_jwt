@@ -25,7 +25,7 @@ class Command(BaseCommand):
         try:
             if getattr(settings, "DEBUG") is False:
                 raise CommandError("obtain_token command requires DEBUG=True ")
-            user = get_user_model().objects.filter(**self._parse_filter(options['filter'])).first()
+            user = get_user_model().objects.filter(**self._parse_filter(options['filter']))
             if len(user) == 0:
                 raise CommandError("There is no user with the given filter")
             if len(user) > 1:
