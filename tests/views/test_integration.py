@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import base64
 import pytest
 
 from rest_framework import status
@@ -180,3 +181,19 @@ def test_view__auth_cookie(monkeypatch, user, call_auth_endpoint):
     response = response.client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
+
+
+def test_view_returns_200_with_basic_authentication(api_client, user):
+    credentials = "Basic " + base64.b64encode('username:password'.encode('utf-8')).decode('utf-8')
+    api_client.credentials(HTTP_AUTHORIZATION=credentials)
+    url = reverse("test-view")
+    response = api_client.get(url)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_view_returns_401_with_invalid_basic_authentication(api_client, user):
+    credentials = "Basic " + base64.b64encode('username:pass'.encode('utf-8')).decode('utf-8')
+    api_client.credentials(HTTP_AUTHORIZATION=credentials)
+    url = reverse("test-view")
+    response = api_client.get(url)
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
