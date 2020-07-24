@@ -160,6 +160,18 @@ There are two options for blacklisting tokens:
 {'token' : '<token_to_be_blacklisted>'}
 ```
 
+For example, your `urls.py` may look like:
+
+```python
+from rest_framework_jwt.blacklist.views import BlacklistView
+from rest_framework_jwt.views import obtain_jwt_token
+
+urlpatterns = [
+    path("auth/", obtain_jwt_token),
+    path("auth/logout/", BlacklistView.as_view({"post": "create"}))
+]
+```
+
 ### `delete_stale_tokens` management command
 
 When called, deletes all blacklisted tokens that have expired.
