@@ -119,6 +119,9 @@ class ExampleView(APIView):
     ...
 ```
 
+This is necessary if the `JSONWebTokenAuthentication` class wasn't added to the `DEFAULT_AUTHENTICATION_CLASSES`, or if JWT authentication is needed *only* on certain views. If you have added it to `DEFAULT_AUTHENTICATION_CLASSES`, then the views will be authenticated using JWT authentication automatically.
+
+
 ## Refresh Token
 If `JWT_ALLOW_REFRESH` is True, **non-expired** tokens can be "refreshed" to obtain a brand new token with renewed expiration time. Add a URL pattern like this:
 ```python
