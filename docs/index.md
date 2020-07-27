@@ -97,6 +97,31 @@ Now in order to access protected api urls you must include the `Authorization: B
 $ curl -H "Authorization: Bearer <your_token>" http://localhost:8000/protected-url/
 ```
 
+In addition to adding the Authorization: Bearer in your requests, make sure that you have decorated your views properly. For this, import the `JSONWebTokenAuthentication` authentication class from `rest_framework_jwt.authentication`
+
+```python
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+```
+If you are using django's function based views, then you should decorate your views with the authentication_classes decorator containing JSONWebTokenAuthentication as follows:
+
+```python
+...
+@authentication_classes([JSONWebTokenAuthentication])
+def protectedView(request):
+    ...
+```
+
+In case you are using class based views, you should override the `authentication_classes` attribute in the view like so:
+```python
+class ExampleView(APIView):
+    ...
+    authentication_classes = [JSONWebTokenAuthentication]
+    ...
+```
+
+This is necessary if the `JSONWebTokenAuthentication` class wasn't added to the `DEFAULT_AUTHENTICATION_CLASSES`, or if JWT authentication is needed *only* on certain views. If you have added it to `DEFAULT_AUTHENTICATION_CLASSES`, then the views will be authenticated using JWT authentication automatically.
+
+
 ## Refresh Token
 If `JWT_ALLOW_REFRESH` is True, **non-expired** tokens can be "refreshed" to obtain a brand new token with renewed expiration time. Add a URL pattern like this:
 ```python
