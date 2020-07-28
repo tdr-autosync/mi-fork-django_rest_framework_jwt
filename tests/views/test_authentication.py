@@ -105,6 +105,7 @@ def test_valid_credentials_return_jwt_with_expected_claims(user, call_auth_endpo
         'exp',
         'user_id',
         'orig_iat',
+        'orig_jti',
     }
     assert payload.keys() == expected_claims
 

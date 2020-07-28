@@ -76,6 +76,26 @@ def test_valid_token__returns_new_token(call_auth_refresh_endpoint, user):
     assert refresh_token != auth_token
 
 
+def test_valid_token__returns_new_token_preserving_original_token_id(call_auth_refresh_endpoint, user):
+    payload = JSONWebTokenAuthentication.jwt_create_payload(user)
+    auth_token = JSONWebTokenAuthentication.jwt_encode_payload(payload)
+
+    refresh_response = call_auth_refresh_endpoint(auth_token)
+    refresh_token = refresh_response.json()["token"]
+    refresh_token_payload = JSONWebTokenAuthentication.jwt_decode_token(refresh_token)
+    assert refresh_token_payload["orig_jti"] == str(payload["orig_jti"])
+
+
+def test_valid_token__returns_new_token_with_new_token_id(call_auth_refresh_endpoint, user):
+    payload = JSONWebTokenAuthentication.jwt_create_payload(user)
+    auth_token = JSONWebTokenAuthentication.jwt_encode_payload(payload)
+
+    refresh_response = call_auth_refresh_endpoint(auth_token)
+    refresh_token = refresh_response.json()["token"]
+    refresh_token_payload = JSONWebTokenAuthentication.jwt_decode_token(refresh_token)
+    assert refresh_token_payload["jti"] != str(payload["jti"])
+
+
 def test_expired_token__returns_validation_error(
     call_auth_refresh_endpoint, user
 ):

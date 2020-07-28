@@ -116,6 +116,11 @@ class RefreshAuthTokenSerializer(serializers.Serializer):
         new_payload = JSONWebTokenAuthentication.jwt_create_payload(user)
         new_payload['orig_iat'] = orig_iat
 
+        # Track the token ID of the original token, if it exists
+        orig_jti = payload.get('orig_jti')
+        if orig_jti:
+            new_payload['orig_jti'] = orig_jti
+
         return {
             'token':
                 JSONWebTokenAuthentication.jwt_encode_payload(new_payload),

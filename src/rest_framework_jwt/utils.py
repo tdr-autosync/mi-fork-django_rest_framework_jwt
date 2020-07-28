@@ -89,6 +89,10 @@ def jwt_create_payload(user):
     if api_settings.JWT_ALLOW_REFRESH:
         payload['orig_iat'] = unix_epoch(issued_at_time)
 
+        # Include the original token ID so we can associate
+        # fresh tokens with the original
+        payload['orig_jti'] = payload['jti']
+
     if api_settings.JWT_AUDIENCE is not None:
         payload['aud'] = api_settings.JWT_AUDIENCE
 
