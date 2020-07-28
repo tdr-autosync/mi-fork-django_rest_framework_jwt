@@ -21,7 +21,10 @@ from rest_framework_jwt.compat import gettext_lazy as _
 from rest_framework_jwt.compat import has_set_cookie_samesite
 from rest_framework_jwt.settings import api_settings
 
+import re
+
 from sys import version_info
+
 
 @fixture
 def rsa_keys(scope="session"):
@@ -77,6 +80,33 @@ def test_valid_credentials_return_jwt(user, call_auth_endpoint):
     assert response.status_code == status.HTTP_200_OK
     assert payload["user_id"] == user.id
     assert payload["username"] == user.get_username()
+
+
+def test_valid_credentials_return_jwt_uuid4_token_id(user, call_auth_endpoint):
+    response = call_auth_endpoint("username", "password")
+
+    token = response.json()["token"]
+    payload = JSONWebTokenAuthentication.jwt_decode_token(token)
+
+    pattern = r'[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}\Z'
+    assert re.match(pattern, payload['jti'])
+
+
+def test_valid_credentials_return_jwt_with_expected_claims(user, call_auth_endpoint):
+    response = call_auth_endpoint("username", "password")
+
+    token = response.json()["token"]
+    payload = JSONWebTokenAuthentication.jwt_decode_token(token)
+
+    expected_claims = {
+        'jti',
+        'username',
+        'iat',
+        'exp',
+        'user_id',
+        'orig_iat',
+    }
+    assert payload.keys() == expected_claims
 
 
 def test_valid_credentials_with_aud_and_iss_settings_return_jwt(

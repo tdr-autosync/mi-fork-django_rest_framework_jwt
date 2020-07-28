@@ -6,6 +6,7 @@ from calendar import timegm
 from datetime import datetime
 
 import jwt
+import uuid
 
 from django.apps import apps
 from django.contrib.auth import get_user_model
@@ -68,6 +69,7 @@ def jwt_create_payload(user):
     expiration_time = issued_at_time + api_settings.JWT_EXPIRATION_DELTA
 
     payload = {
+        'jti': uuid.uuid4(),
         'username': user.get_username(),
         'iat': unix_epoch(issued_at_time),
         'exp': expiration_time
