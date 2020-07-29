@@ -53,6 +53,24 @@ def test_without_orig_iat_in_payload__returns_validation_error(
     assert response.json() == expected_output
 
 
+def test_require_id_without_orig_jti_in_payload__returns_validation_error(
+    monkeypatch, call_auth_refresh_endpoint, user
+):
+    monkeypatch.setattr(api_settings, "JWT_REQUIRE_TOKEN_ID", True)
+
+    # create token without orig_jti in payload
+    payload = JSONWebTokenAuthentication.jwt_create_payload(user)
+    del payload["orig_jti"]
+    auth_token = JSONWebTokenAuthentication.jwt_encode_payload(payload)
+
+    expected_output = {
+        "non_field_errors": [_("orig_jti field not found in token.")]
+    }
+
+    response = call_auth_refresh_endpoint(auth_token)
+    assert response.json() == expected_output
+
+
 def test_refresh_limit_expired__returns_validation_error(
     call_auth_refresh_endpoint, user
 ):

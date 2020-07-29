@@ -234,6 +234,10 @@ def check_user(payload):
         msg = _('Invalid token.')
         raise serializers.ValidationError(msg)
 
+    if api_settings.JWT_REQUIRE_TOKEN_ID and not payload.get('jti'):
+        msg = _('Invalid token.')
+        raise serializers.ValidationError(msg)
+
     # Make sure user exists
     try:
         User = get_user_model()

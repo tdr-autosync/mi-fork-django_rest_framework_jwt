@@ -339,6 +339,14 @@ have a `kid` header with a defined key.
 
 Default is `False`.
 
+### JWT_REQUIRE_TOKEN_ID
+
+Expect all tokens to have a `jti` token id claim, and refreshable tokens to have an `orig_jti` claim.
+
+These claims have been added automatically since version ???. Once all valid tokens in your environment have these claims, we recommend setting this to `True`.
+
+Default is `False`.
+
 ### JWT_AUDIENCE
 
 This is a string that will be checked against the `aud` field of the token, if present.
