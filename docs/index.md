@@ -343,7 +343,11 @@ Default is `False`.
 
 Expect all tokens to have a `jti` token id claim, and refreshable tokens to have an `orig_jti` claim.
 
-These claims have been added automatically since version ???. Once all valid tokens in your environment have these claims, we recommend setting this to `True`.
+These claims have been included automatically since version 1.17.
+
+For new installations, please override the default and set this to `True`, as all tokens will have the claims from the outset.
+
+For existing installations, we recommend setting this to `True` once all of the valid tokens in your production environment were produced by version 1.17 or later. This will usually be after `JWT_EXPIRATION_DELTA` has elapsed from upgrading to version 1.17 or higher.
 
 Default is `False`.
 
