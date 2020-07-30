@@ -66,6 +66,54 @@ def test_view_returns_401_for_expired_token(api_client, user):
     assert response.json() == expected_output
 
 
+def test_view_returns_401_for_invalid_algorithm(api_client, user):
+    header = '{"alg": "bad", "typ": "JWT"}'
+    token = base64.b64encode(header.encode('ascii')) + "..".encode('ascii')
+
+    api_client.credentials(HTTP_AUTHORIZATION="Bearer " + token.decode())
+
+    expected_output = {"detail": _("Invalid token.")}
+
+    url = reverse("test-view")
+    response = api_client.get(url)
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    assert response.json() == expected_output
+
+
+def test_view_returns_401_for_bogus_issued_at(api_client, user):
+    payload = JSONWebTokenAuthentication.jwt_create_payload(user)
+    payload["iat"] = 'banana'
+    token = JSONWebTokenAuthentication.jwt_encode_payload(payload)
+
+    api_client.credentials(HTTP_AUTHORIZATION="Bearer " + token)
+
+    expected_output = {"detail": _("Invalid token.")}
+
+    url = reverse("test-view")
+    response = api_client.get(url)
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    assert response.json() == expected_output
+
+
+def test_view_returns_401_for_incorrect_audience(monkeypatch, api_client, user):
+    monkeypatch.setattr(api_settings, "JWT_AUDIENCE", 'some-audience')
+    payload = JSONWebTokenAuthentication.jwt_create_payload(user)
+    payload["aud"] = 'banana'
+    token = JSONWebTokenAuthentication.jwt_encode_payload(payload)
+
+    api_client.credentials(HTTP_AUTHORIZATION="Bearer " + token)
+
+    expected_output = {"detail": _("Invalid token.")}
+
+    url = reverse("test-view")
+    response = api_client.get(url)
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    assert response.json() == expected_output
+
+
 def test_view_returns_401_for_missing_required_key_id(monkeypatch, api_client, user):
     monkeypatch.setattr(api_settings, "JWT_INSIST_ON_KID", True)
     header = '{"alg": "HS256", "typ": "JWT"}'
