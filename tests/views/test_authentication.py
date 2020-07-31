@@ -90,7 +90,6 @@ def test_valid_credentials_return_jwt_uuid4_token_id(user, call_auth_endpoint):
 
     pattern = r'[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}\Z'
     assert re.match(pattern, payload['jti'])
-    assert payload['jti'] == payload['orig_jti']
 
 
 def test_valid_credentials_return_jwt_with_expected_claims(user, call_auth_endpoint):
@@ -106,7 +105,6 @@ def test_valid_credentials_return_jwt_with_expected_claims(user, call_auth_endpo
         'exp',
         'user_id',
         'orig_iat',
-        'orig_jti',
     }
     assert payload.keys() == expected_claims
 

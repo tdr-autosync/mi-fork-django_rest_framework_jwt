@@ -341,11 +341,11 @@ Default is `False`.
 
 ### JWT_REQUIRE_TOKEN_ID
 
-Expect all tokens to have a `jti` token id claim, and refreshable tokens to have an `orig_jti` claim.
+Expect all tokens to have a `jti` token id claim.
 
-These claims have been included automatically since version 1.17.
+This claim has been included automatically since version 1.17.
 
-For new installations, please override the default and set this to `True`, as all tokens will have the claims from the outset.
+For new installations, please override the default and set this to `True`, as every token will have an id from the outset.
 
 For existing installations, we recommend setting this to `True` once all of the valid tokens in your production environment were produced by version 1.17 or later. This will usually be after `JWT_EXPIRATION_DELTA` has elapsed from upgrading to version 1.17 or higher.
 
