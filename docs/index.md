@@ -351,7 +351,7 @@ May be set to:
 * `include`: add token id claims to tokens, but continue accepting old tokens without them
 * `require`: add token id claims to tokens, and reject tokens that lack them
 
-The default has been to include these claims since version 1.17, so when upgrading
+The default has been to include these claims since version 1.17.
 
 For new installations, please override the default and set this to `require`, as every token will have an id from the outset.
 
