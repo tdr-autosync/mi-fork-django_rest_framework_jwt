@@ -92,6 +92,16 @@ def test_valid_credentials_return_jwt_uuid4_token_id(user, call_auth_endpoint):
     assert re.match(pattern, payload['jti'])
 
 
+def test_valid_credentials_return_jwt_without_token_id_when_configured_off(monkeypatch, user, call_auth_endpoint):
+    monkeypatch.setattr(api_settings, "JWT_TOKEN_ID", "off")
+    response = call_auth_endpoint("username", "password")
+
+    token = response.json()["token"]
+    payload = JSONWebTokenAuthentication.jwt_decode_token(token)
+
+    assert "jti" not in payload
+
+
 def test_valid_credentials_return_jwt_with_expected_claims(user, call_auth_endpoint):
     response = call_auth_endpoint("username", "password")
 

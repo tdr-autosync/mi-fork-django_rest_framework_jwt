@@ -69,11 +69,13 @@ def jwt_create_payload(user):
     expiration_time = issued_at_time + api_settings.JWT_EXPIRATION_DELTA
 
     payload = {
-        'jti': uuid.uuid4(),
         'username': user.get_username(),
         'iat': unix_epoch(issued_at_time),
         'exp': expiration_time
     }
+
+    if api_settings.JWT_TOKEN_ID != 'off':
+        payload['jti'] = uuid.uuid4()
 
     if api_settings.JWT_PAYLOAD_INCLUDE_USER_ID:
         payload['user_id'] = user.pk
@@ -230,7 +232,7 @@ def check_user(payload):
         msg = _('Invalid token.')
         raise serializers.ValidationError(msg)
 
-    if api_settings.JWT_REQUIRE_TOKEN_ID and not payload.get('jti'):
+    if api_settings.JWT_TOKEN_ID == 'require' and not payload.get('jti'):
         msg = _('Invalid token.')
         raise serializers.ValidationError(msg)
 

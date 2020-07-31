@@ -44,7 +44,7 @@ def test_token_without_username_returns_validation_error(
 def test_token_without_required_token_id_returns_validation_error(
     monkeypatch, user, call_auth_verify_endpoint
 ):
-    monkeypatch.setattr(api_settings, "JWT_REQUIRE_TOKEN_ID", True)
+    monkeypatch.setattr(api_settings, "JWT_TOKEN_ID", "require")
     payload = JSONWebTokenAuthentication.jwt_create_payload(user)
     payload.pop("jti")
     auth_token = JSONWebTokenAuthentication.jwt_encode_payload(payload)

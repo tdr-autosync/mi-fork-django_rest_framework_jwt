@@ -17,7 +17,7 @@ DEFAULTS = {
     'JWT_PUBLIC_KEY': None,
     'JWT_ALGORITHM': 'HS256',
     'JWT_INSIST_ON_KID': False,
-    'JWT_REQUIRE_TOKEN_ID': False,
+    'JWT_TOKEN_ID': 'include',
     'JWT_AUDIENCE': None,
     'JWT_ISSUER': None,
     'JWT_ENCODE_HANDLER':
@@ -72,3 +72,8 @@ if not isinstance(
     raise ImproperlyConfigured(
         '`JWT_REFRESH_EXPIRATION_DELTA` setting must be instance of '
         '`datetime.timedelta`')
+
+if api_settings.JWT_TOKEN_ID not in {'off', 'include', 'require'}:
+    raise ImproperlyConfigured(
+        "`JWT_TOKEN_ID` setting must be 'off', 'include' or 'require'"
+    )

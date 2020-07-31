@@ -120,7 +120,7 @@ class RefreshAuthTokenSerializer(serializers.Serializer):
         orig_jti = payload.get('orig_jti') or payload.get('jti')
         if orig_jti:
             new_payload['orig_jti'] = orig_jti
-        elif api_settings.JWT_REQUIRE_TOKEN_ID:
+        elif api_settings.JWT_TOKEN_ID == 'require':
             msg = _('orig_jti or jti field not found in token.')
             raise serializers.ValidationError(msg)
 
