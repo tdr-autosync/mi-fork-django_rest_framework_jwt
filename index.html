@@ -201,6 +201,25 @@ urlpatterns = [
 <pre><code class="bash">$ curl -H &quot;Authorization: Bearer &lt;your_token&gt;&quot; http://localhost:8000/protected-url/
 </code></pre>
 
+<p>In addition to adding the Authorization: Bearer in your requests, make sure that you have decorated your views properly. For this, import the <code>JSONWebTokenAuthentication</code> authentication class from <code>rest_framework_jwt.authentication</code></p>
+<pre><code class="python">from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+</code></pre>
+
+<p>If you are using django's function based views, then you should decorate your views with the authentication_classes decorator containing JSONWebTokenAuthentication as follows:</p>
+<pre><code class="python">...
+@authentication_classes([JSONWebTokenAuthentication])
+def protectedView(request):
+    ...
+</code></pre>
+
+<p>In case you are using class based views, you should override the <code>authentication_classes</code> attribute in the view like so:</p>
+<pre><code class="python">class ExampleView(APIView):
+    ...
+    authentication_classes = [JSONWebTokenAuthentication]
+    ...
+</code></pre>
+
+<p>This is necessary if the <code>JSONWebTokenAuthentication</code> class wasn't added to the <code>DEFAULT_AUTHENTICATION_CLASSES</code>, or if JWT authentication is needed <em>only</em> on certain views. If you have added it to <code>DEFAULT_AUTHENTICATION_CLASSES</code>, then the views will be authenticated using JWT authentication automatically.</p>
 <h2 id="refresh-token">Refresh Token</h2>
 <p>If <code>JWT_ALLOW_REFRESH</code> is True, <strong>non-expired</strong> tokens can be "refreshed" to obtain a brand new token with renewed expiration time. Add a URL pattern like this:</p>
 <pre><code class="python">    from rest_framework_jwt.views import refresh_jwt_token
@@ -258,6 +277,8 @@ urlpatterns = [
     'JWT_PRIVATE_KEY': None,
     'JWT_PUBLIC_KEY': None,
     'JWT_ALGORITHM': 'HS256',
+    'JWT_INSIST_ON_KID': False,
+    'JWT_TOKEN_ID': 'include',
     'JWT_AUDIENCE': None,
     'JWT_ISSUER': None,
     'JWT_ENCODE_HANDLER':
@@ -376,6 +397,18 @@ the key, e.g.:</p>
 as a dict assigning key IDs to keys), insist that JWTs to be validated
 have a <code>kid</code> header with a defined key.</p>
 <p>Default is <code>False</code>.</p>
+<h3 id="jwt_token_id">JWT_TOKEN_ID</h3>
+<p>Configure whether tokens have a <code>jti</code> token id claim (and refreshed tokens have a <code>orig_jti</code> claim).</p>
+<p>May be set to:</p>
+<ul>
+<li><code>off</code>: do not include token id claims in tokens</li>
+<li><code>include</code>: add token id claims to tokens, but continue accepting old tokens without them</li>
+<li><code>require</code>: add token id claims to tokens, and reject tokens that lack them</li>
+</ul>
+<p>The default has been to include these claims since version 1.17.</p>
+<p>For new installations, please override the default and set this to <code>require</code>, as every token will have an id from the outset.</p>
+<p>For existing installations, when migrating from an older version (pre-1.17) or when changing the setting from <code>off</code>, we recommend setting this to <code>require</code> once all of the valid tokens have the id claims. This will typically be after <code>JWT_EXPIRATION_DELTA</code> has elapsed since upgrading or allowing id claims to be included.</p>
+<p>Default is <code>include</code>.</p>
 <h3 id="jwt_audience">JWT_AUDIENCE</h3>
 <p>This is a string that will be checked against the <code>aud</code> field of the token, if present.</p>
 <p>Default is <code>None</code> (fail if <code>aud</code> present on JWT).</p>
@@ -533,5 +566,5 @@ token = jwt_encode_handler(payload)
 
 <!--
 MkDocs version : 0.13.2
-Build Date UTC : 2020-07-16 14:38:00.789801
+Build Date UTC : 2020-08-14 11:21:58.249097
 -->
