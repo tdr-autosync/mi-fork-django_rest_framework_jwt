@@ -11,6 +11,7 @@ from rest_framework_jwt.blacklist.models import BlacklistedToken
 from rest_framework_jwt.compat import gettext_lazy as _
 from rest_framework_jwt.settings import api_settings
 
+import uuid
 
 def test_invalid_token__returns_validation_error(call_auth_refresh_endpoint):
     expected_output = {"non_field_errors": [_("Error decoding token.")]}
@@ -53,6 +54,8 @@ def test_without_orig_iat_in_payload__returns_validation_error(
     assert response.json() == expected_output
 
 
+
+
 def test_refresh_limit_expired__returns_validation_error(
     call_auth_refresh_endpoint, user
 ):
@@ -74,6 +77,38 @@ def test_valid_token__returns_new_token(call_auth_refresh_endpoint, user):
     refresh_response = call_auth_refresh_endpoint(auth_token)
     refresh_token = refresh_response.json()["token"]
     assert refresh_token != auth_token
+
+
+def test_valid_token__returns_new_token_preserving_token_id_for_first_refresh(call_auth_refresh_endpoint, user):
+    payload = JSONWebTokenAuthentication.jwt_create_payload(user)
+    auth_token = JSONWebTokenAuthentication.jwt_encode_payload(payload)
+    assert "orig_jti" not in payload
+
+    refresh_response = call_auth_refresh_endpoint(auth_token)
+    refresh_token = refresh_response.json()["token"]
+    refresh_token_payload = JSONWebTokenAuthentication.jwt_decode_token(refresh_token)
+    assert refresh_token_payload["orig_jti"] == str(payload["jti"])
+
+
+def test_valid_token__returns_new_token_preserving_original_token_id_for_subsequent_refreshes(call_auth_refresh_endpoint, user):
+    payload = JSONWebTokenAuthentication.jwt_create_payload(user)
+    payload["orig_jti"] = uuid.uuid4()
+    auth_token = JSONWebTokenAuthentication.jwt_encode_payload(payload)
+
+    refresh_response = call_auth_refresh_endpoint(auth_token)
+    refresh_token = refresh_response.json()["token"]
+    refresh_token_payload = JSONWebTokenAuthentication.jwt_decode_token(refresh_token)
+    assert refresh_token_payload["orig_jti"] == str(payload["orig_jti"])
+
+
+def test_valid_token__returns_new_token_with_new_token_id(call_auth_refresh_endpoint, user):
+    payload = JSONWebTokenAuthentication.jwt_create_payload(user)
+    auth_token = JSONWebTokenAuthentication.jwt_encode_payload(payload)
+
+    refresh_response = call_auth_refresh_endpoint(auth_token)
+    refresh_token = refresh_response.json()["token"]
+    refresh_token_payload = JSONWebTokenAuthentication.jwt_decode_token(refresh_token)
+    assert refresh_token_payload["jti"] != str(payload["jti"])
 
 
 def test_expired_token__returns_validation_error(

@@ -199,6 +199,8 @@ JWT_AUTH = {
     'JWT_PRIVATE_KEY': None,
     'JWT_PUBLIC_KEY': None,
     'JWT_ALGORITHM': 'HS256',
+    'JWT_INSIST_ON_KID': False,
+    'JWT_TOKEN_ID': 'include',
     'JWT_AUDIENCE': None,
     'JWT_ISSUER': None,
     'JWT_ENCODE_HANDLER':
@@ -338,6 +340,24 @@ as a dict assigning key IDs to keys), insist that JWTs to be validated
 have a `kid` header with a defined key.
 
 Default is `False`.
+
+### JWT_TOKEN_ID
+
+Configure whether tokens have a `jti` token id claim (and refreshed tokens have a `orig_jti` claim).
+
+May be set to:
+
+* `off`: do not include token id claims in tokens
+* `include`: add token id claims to tokens, but continue accepting old tokens without them
+* `require`: add token id claims to tokens, and reject tokens that lack them
+
+The default has been to include these claims since version 1.17.
+
+For new installations, please override the default and set this to `require`, as every token will have an id from the outset.
+
+For existing installations, when migrating from an older version (pre-1.17) or when changing the setting from `off`, we recommend setting this to `require` once all of the valid tokens have the id claims. This will typically be after `JWT_EXPIRATION_DELTA` has elapsed since upgrading or allowing id claims to be included.
+
+Default is `include`.
 
 ### JWT_AUDIENCE
 

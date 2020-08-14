@@ -6,6 +6,7 @@ from calendar import timegm
 from datetime import datetime
 
 import jwt
+import uuid
 
 from django.apps import apps
 from django.contrib.auth import get_user_model
@@ -72,6 +73,9 @@ def jwt_create_payload(user):
         'iat': unix_epoch(issued_at_time),
         'exp': expiration_time
     }
+
+    if api_settings.JWT_TOKEN_ID != 'off':
+        payload['jti'] = uuid.uuid4()
 
     if api_settings.JWT_PAYLOAD_INCLUDE_USER_ID:
         payload['user_id'] = user.pk
@@ -225,6 +229,10 @@ def check_user(payload):
         jwt_get_username_from_payload(payload)
 
     if not username:
+        msg = _('Invalid token.')
+        raise serializers.ValidationError(msg)
+
+    if api_settings.JWT_TOKEN_ID == 'require' and not payload.get('jti'):
         msg = _('Invalid token.')
         raise serializers.ValidationError(msg)
 
