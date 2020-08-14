@@ -13,6 +13,25 @@ time.
 
 .. towncrier release notes start
 
+v1.16.2 (2020-08-14)
+====================
+
+Features
+--------
+
+- Default to including a token ID claim (`jti`) in all tokens.
+  For tokens resulting from refresh, also include the token ID of the original token in the chain of refreshes as `orig_jti`. ([#69](https://github.com/Styria-Digital/django-rest-framework-jwt/pull/69))
+
+
+Improved Documentation
+----------------------
+
+- Add explanation for blacklisting feature to the documentation. ([#61](https://github.com/Styria-Digital/django-rest-framework-jwt/pull/61))
+- When the Authorization header is sent with a different prefix other than default it raises error. 
+  It should return None and continue toward the other authentication middleware. ([#65](https://github.com/Styria-Digital/django-rest-framework-jwt/pull/65))
+- Added a section about protecting views properly using the appropriate decorator for function based view and variable for class based views. ([#67](https://github.com/Styria-Digital/django-rest-framework-jwt/pull/67))
+
+
 1.16.2 (2020-06-26)
 ====================
 
