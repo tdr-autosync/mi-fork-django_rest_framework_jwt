@@ -218,6 +218,9 @@ def check_payload(token):
     except jwt.DecodeError:
         msg = _('Error decoding token.')
         raise serializers.ValidationError(msg)
+    except jwt.InvalidTokenError:
+        msg = _('Invalid token.')
+        raise serializers.ValidationError(msg)
 
     return payload
 
