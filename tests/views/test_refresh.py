@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 
+import base64
 from datetime import timedelta
 
 from django.utils import timezone
@@ -139,4 +140,17 @@ def test_blacklisted_token__returns_validation_error(
     expected_output = {"non_field_errors": [_("Token is blacklisted.")]}
 
     refresh_response = call_auth_refresh_endpoint(auth_token)
+    assert refresh_response.json() == expected_output
+
+
+def test_refresh_with_invalid_algorithm__returns_validation_error(
+    call_auth_refresh_endpoint, user
+):
+    header = '{"alg": "bad", "typ": "JWT"}'
+    token_bytes = base64.b64encode(header.encode('ascii')) + "..".encode('ascii')
+    token = token_bytes.decode()
+
+    expected_output = {"non_field_errors": [_("Invalid token.")]}
+
+    refresh_response = call_auth_refresh_endpoint(token)
     assert refresh_response.json() == expected_output
