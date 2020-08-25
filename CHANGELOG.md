@@ -13,6 +13,15 @@ time.
 
 .. towncrier release notes start
 
+v1.17.0 (2020-08-25)
+====================
+
+Bugfixes
+--------
+
+- Improve error handling for invalid tokens. ([#77](https://github.com/Styria-Digital/django-rest-framework-jwt/pull/77))
+
+
 1.17.0 (2020-08-14)
 ====================
 
