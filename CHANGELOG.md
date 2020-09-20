@@ -13,6 +13,16 @@ time.
 
 .. towncrier release notes start
 
+v1.17.1 (2020-09-20)
+====================
+
+Features
+--------
+
+- If the authentication header cant be parsed, fall back to
+  cookies or allow other handlers. ([#71](https://github.com/Styria-Digital/django-rest-framework-jwt/pull/71))
+
+
 1.17.1 (2020-08-25)
 ====================
 
