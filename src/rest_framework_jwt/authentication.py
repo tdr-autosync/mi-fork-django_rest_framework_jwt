@@ -92,11 +92,11 @@ class JSONWebTokenAuthentication(BaseAuthentication):
 
     @classmethod
     def get_token_from_request(cls, request):
-        authorization_header = force_str(get_authorization_header(request))
-
         try:
+            authorization_header = force_str(get_authorization_header(request))
+
             return cls.get_token_from_authorization_header(authorization_header)
-        except InvalidAuthorizationCredentials:
+        except (InvalidAuthorizationCredentials, UnicodeDecodeError):
             return cls.get_token_from_cookies(request.COOKIES)
 
     @classmethod
