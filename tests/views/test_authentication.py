@@ -10,7 +10,7 @@ from django.utils.encoding import force_str
 from django.utils.translation import ugettext_lazy as _
 
 from jwt import get_unverified_header
-from jwt.exceptions import InvalidKeyError, InvalidAlgorithmError, InvalidSignatureError
+from jwt.exceptions import InvalidAlgorithmError, InvalidSignatureError, InvalidTokenError
 
 from pytest import skip, fixture, raises
 
@@ -352,7 +352,7 @@ def test_keys_key_id_not_found(
     secret_key = OrderedDict(hash3="three")
     monkeypatch.setattr(api_settings, "JWT_SECRET_KEY", secret_key)
 
-    with raises(InvalidKeyError):
+    with raises(InvalidTokenError):
         assert JSONWebTokenAuthentication.jwt_decode_token(token) == None
 
 def test_insist_on_key_id(
@@ -377,7 +377,7 @@ def test_insist_on_key_id(
 
     # check if we insist on the key beging named
     monkeypatch.setattr(api_settings, "JWT_INSIST_ON_KID", True)
-    with raises(InvalidKeyError):
+    with raises(InvalidTokenError):
         assert JSONWebTokenAuthentication.jwt_decode_token(token) == None
 
 def test_InvalidAlgorithmError():

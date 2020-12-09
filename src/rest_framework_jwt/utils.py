@@ -163,9 +163,9 @@ def jwt_decode_token(token):
             try:
                 keys = keys[kid]
             except KeyError:
-                raise jwt.exceptions.InvalidKeyError
+                raise jwt.exceptions.InvalidTokenError
         elif api_settings.JWT_INSIST_ON_KID:
-            raise jwt.exceptions.InvalidKeyError
+            raise jwt.exceptions.InvalidTokenError
         else:
             keys = list(keys.values())
 
