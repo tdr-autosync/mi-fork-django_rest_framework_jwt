@@ -32,7 +32,7 @@ class BaseJSONWebTokenAPIView(GenericAPIView):
         response_data = JSONWebTokenAuthentication. \
             jwt_create_response_payload(token, user, request, issued_at)
 
-        response = Response(response_data)
+        response = Response(response_data, status=status.HTTP_201_CREATED)
 
         if api_settings.JWT_AUTH_COOKIE:
             set_cookie_with_token(response, api_settings.JWT_AUTH_COOKIE, token)
@@ -93,7 +93,7 @@ class ImpersonateJSONWebTokenView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
 
         token = serializer.validated_data.get("token")
-        response = Response({"token": token})
+        response = Response({"token": token}, status=status.HTTP_201_CREATED)
 
         if api_settings.JWT_IMPERSONATION_COOKIE:
             set_cookie_with_token(
