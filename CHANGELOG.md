@@ -13,6 +13,22 @@ time.
 
 .. towncrier release notes start
 
+v1.17.2 (2020-12-14)
+====================
+
+Bugfixes
+--------
+
+- Improve error handling for tokens with an unrecognized key identifier (`kid`). ([#78](https://github.com/Styria-Digital/django-rest-framework-jwt/pull/78))
+- Fixed JWT creation status codes from 200 to 201 ([#80](https://github.com/Styria-Digital/django-rest-framework-jwt/pull/80))
+
+
+Misc
+----
+
+- Add obtain_token management command ([#62](https://github.com/Styria-Digital/django-rest-framework-jwt/pull/62))
+
+
 1.17.2 (2020-09-20)
 ====================
 
