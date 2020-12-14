@@ -116,7 +116,7 @@ def test_valid_credentials_return_jwt_with_expected_claims(user, call_auth_endpo
         'user_id',
         'orig_iat',
     }
-    assert payload.keys() == expected_claims
+    assert set(payload.keys()) == expected_claims
 
 
 def test_valid_credentials_with_aud_and_iss_settings_return_jwt(
