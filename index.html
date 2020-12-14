@@ -81,6 +81,8 @@
                 
                     <li><a class="toctree-l4" href="#creating-a-new-token-manually">Creating a new token manually</a></li>
                 
+                    <li><a class="toctree-l4" href="#creating-a-new-token-on-the-command-line">Creating a new token on the command line</a></li>
+                
             
             </ul>
         
@@ -149,23 +151,21 @@ endpoints over SSL/TLS to protect against content tampering and certain kinds of
 replay attacks.</p>
 <h2 id="installation">Installation</h2>
 <p>Install using <code>pip</code>...</p>
-<pre><code class="bash">$ pip install drf-jwt
+<pre><code class="language-bash">$ pip install drf-jwt
 </code></pre>
-
 <p>Add the app to your project:</p>
-<pre><code class="bash">INSTALLED_APPS = [
+<pre><code class="language-bash">INSTALLED_APPS = [
     ...
     'rest_framework_jwt',
     'rest_framework_jwt.blacklist',
     ...
 ]
 </code></pre>
-
 <p>Note the <em>blacklist</em> app in <code>INSTALLED_APPS</code>. You have to add it even if you dont't use
  the feature to avoid DB issues.</p>
 <h2 id="usage">Usage</h2>
 <p>In your <code>settings.py</code>, add <code>JSONWebTokenAuthentication</code> to Django REST framework's <code>DEFAULT_AUTHENTICATION_CLASSES</code>.</p>
-<pre><code class="python">REST_FRAMEWORK = {
+<pre><code class="language-python">REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
@@ -176,9 +176,8 @@ replay attacks.</p>
     ),
 }
 </code></pre>
-
 <p>In your <code>urls.py</code> add the following URL route to enable obtaining a token via a POST included the user's username and password.</p>
-<pre><code class="python">from rest_framework_jwt.views import obtain_jwt_token
+<pre><code class="language-python">from rest_framework_jwt.views import obtain_jwt_token
 #...
 
 urlpatterns = [
@@ -188,41 +187,34 @@ urlpatterns = [
     url(r'^api-token-auth/', obtain_jwt_token),
 ]
 </code></pre>
-
 <p>You can easily test if the endpoint is working by doing the following in your terminal, if you had a user created with the username <strong>admin</strong> and password <strong>password123</strong>.</p>
-<pre><code class="bash">$ curl -X POST -d &quot;username=admin&amp;password=password123&quot; http://localhost:8000/api-token-auth/
+<pre><code class="language-bash">$ curl -X POST -d &quot;username=admin&amp;password=password123&quot; http://localhost:8000/api-token-auth/
 </code></pre>
-
 <p>Alternatively, you can use all the content types supported by the Django REST framework to obtain the auth token. For example:</p>
-<pre><code class="bash">$ curl -X POST -H &quot;Content-Type: application/json&quot; -d '{&quot;username&quot;:&quot;admin&quot;,&quot;password&quot;:&quot;password123&quot;}' http://localhost:8000/api-token-auth/
+<pre><code class="language-bash">$ curl -X POST -H &quot;Content-Type: application/json&quot; -d '{&quot;username&quot;:&quot;admin&quot;,&quot;password&quot;:&quot;password123&quot;}' http://localhost:8000/api-token-auth/
 </code></pre>
-
 <p>Now in order to access protected api urls you must include the <code>Authorization: Bearer &lt;your_token&gt;</code> header.</p>
-<pre><code class="bash">$ curl -H &quot;Authorization: Bearer &lt;your_token&gt;&quot; http://localhost:8000/protected-url/
+<pre><code class="language-bash">$ curl -H &quot;Authorization: Bearer &lt;your_token&gt;&quot; http://localhost:8000/protected-url/
 </code></pre>
-
 <p>In addition to adding the Authorization: Bearer in your requests, make sure that you have decorated your views properly. For this, import the <code>JSONWebTokenAuthentication</code> authentication class from <code>rest_framework_jwt.authentication</code></p>
-<pre><code class="python">from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+<pre><code class="language-python">from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 </code></pre>
-
 <p>If you are using django's function based views, then you should decorate your views with the authentication_classes decorator containing JSONWebTokenAuthentication as follows:</p>
-<pre><code class="python">...
+<pre><code class="language-python">...
 @authentication_classes([JSONWebTokenAuthentication])
 def protectedView(request):
     ...
 </code></pre>
-
 <p>In case you are using class based views, you should override the <code>authentication_classes</code> attribute in the view like so:</p>
-<pre><code class="python">class ExampleView(APIView):
+<pre><code class="language-python">class ExampleView(APIView):
     ...
     authentication_classes = [JSONWebTokenAuthentication]
     ...
 </code></pre>
-
 <p>This is necessary if the <code>JSONWebTokenAuthentication</code> class wasn't added to the <code>DEFAULT_AUTHENTICATION_CLASSES</code>, or if JWT authentication is needed <em>only</em> on certain views. If you have added it to <code>DEFAULT_AUTHENTICATION_CLASSES</code>, then the views will be authenticated using JWT authentication automatically.</p>
 <h2 id="refresh-token">Refresh Token</h2>
 <p>If <code>JWT_ALLOW_REFRESH</code> is True, <strong>non-expired</strong> tokens can be "refreshed" to obtain a brand new token with renewed expiration time. Add a URL pattern like this:</p>
-<pre><code class="python">    from rest_framework_jwt.views import refresh_jwt_token
+<pre><code class="language-python">    from rest_framework_jwt.views import refresh_jwt_token
     #  ...
 
     urlpatterns = [
@@ -230,17 +222,15 @@ def protectedView(request):
         url(r'^api-token-refresh/', refresh_jwt_token),
     ]
 </code></pre>
-
 <p>Pass in an existing token to the refresh endpoint as follows: <code>{"token": EXISTING_TOKEN}</code>. Note that only non-expired tokens will work. The JSON response looks the same as the normal obtain token endpoint <code>{"token": NEW_TOKEN}</code>.</p>
-<pre><code class="bash">$ curl -X POST -H &quot;Content-Type: application/json&quot; -d '{&quot;token&quot;:&quot;&lt;EXISTING_TOKEN&gt;&quot;}' http://localhost:8000/api-token-refresh/
+<pre><code class="language-bash">$ curl -X POST -H &quot;Content-Type: application/json&quot; -d '{&quot;token&quot;:&quot;&lt;EXISTING_TOKEN&gt;&quot;}' http://localhost:8000/api-token-refresh/
 </code></pre>
-
 <p>Refresh with tokens can be repeated (token1 -&gt; token2 -&gt; token3), but this chain of token stores the time that the original token (obtained with username/password credentials), as <code>orig_iat</code>. You can only keep refreshing tokens up to <code>JWT_REFRESH_EXPIRATION_DELTA</code>.</p>
 <p>A typical use case might be a web app where you'd like to keep the user "logged in" the site without having to re-enter their password, or get kicked out by surprise before their token expired. Imagine they had a 1-hour token and are just at the last minute while they're still doing something. With mobile you could perhaps store the username/password to get a new token, but this is not a great idea in a browser. Each time the user loads the page, you can check if there is an existing non-expired token and if it's close to being expired, refresh it to extend their session. In other words, if a user is actively using your site, they can keep their "session" alive.</p>
 <h2 id="verify-token">Verify Token</h2>
 <p>In some microservice architectures, authentication is handled by a single service. Other services delegate the responsibility of confirming that a user is logged in to this authentication service. This usually means that a service will pass a JWT received from the user to the authentication service, and wait for a confirmation that the JWT is valid before returning protected resources to the user.</p>
 <p>This setup is supported in this package using a verification endpoint. Add the following URL pattern:</p>
-<pre><code class="python">    from rest_framework_jwt.views import verify_jwt_token
+<pre><code class="language-python">    from rest_framework_jwt.views import verify_jwt_token
 
     #...
 
@@ -249,11 +239,9 @@ def protectedView(request):
         url(r'^api-token-verify/', verify_jwt_token),
     ]
 </code></pre>
-
 <p>Passing a token to the verification endpoint will return a 200 response and the token if it is valid. Otherwise, it will return a 400 Bad Request as well as an error identifying why the token was invalid.</p>
-<pre><code class="bash">$ curl -X POST -H &quot;Content-Type: application/json&quot; -d '{&quot;token&quot;:&quot;&lt;EXISTING_TOKEN&gt;&quot;}' http://localhost:8000/api-token-verify/
+<pre><code class="language-bash">$ curl -X POST -H &quot;Content-Type: application/json&quot; -d '{&quot;token&quot;:&quot;&lt;EXISTING_TOKEN&gt;&quot;}' http://localhost:8000/api-token-verify/
 </code></pre>
-
 <h2 id="impersonation-token">Impersonation Token</h2>
 <p>Impersonation allows the service to perform actions on the client’s behalf. A typical use case would be troubleshooting. We can act like the user who submitted an issue without requiring its login credentials.</p>
 <p>By default, only superusers (<code>user.is_superuser == True</code>) can impersonate other accounts. If you need to customize the permission handling process, override the <code>ImpersonateJSONWebTokenView</code>'s <a href="https://www.django-rest-framework.org/api-guide/permissions/#setting-the-permission-policy"><code>permission_classes</code> attribute</a>. </p>
@@ -266,12 +254,20 @@ def protectedView(request):
 2. Blacklisting specific tokens - make a POST request to the <code>BlacklistView</code> with the body</p>
 <pre><code>{'token' : '&lt;token_to_be_blacklisted&gt;'}
 </code></pre>
+<p>For example, your <code>urls.py</code> may look like:</p>
+<pre><code class="language-python">from rest_framework_jwt.blacklist.views import BlacklistView
+from rest_framework_jwt.views import obtain_jwt_token
 
+urlpatterns = [
+    path(&quot;auth/&quot;, obtain_jwt_token),
+    path(&quot;auth/logout/&quot;, BlacklistView.as_view({&quot;post&quot;: &quot;create&quot;}))
+]
+</code></pre>
 <h3 id="delete_stale_tokens-management-command"><code>delete_stale_tokens</code> management command</h3>
 <p>When called, deletes all blacklisted tokens that have expired.</p>
 <h2 id="additional-settings">Additional Settings</h2>
 <p>There are some additional settings that you can override similar to how you'd do it with Django REST framework itself. Here are all the available defaults.</p>
-<pre><code class="python">JWT_AUTH = {
+<pre><code class="language-python">JWT_AUTH = {
     'JWT_SECRET_KEY': settings.SECRET_KEY,
     'JWT_GET_USER_SECRET_KEY': None,
     'JWT_PRIVATE_KEY': None,
@@ -308,7 +304,6 @@ def protectedView(request):
     'JWT_DELETE_STALE_BLACKLISTED_TOKENS': False,
 }
 </code></pre>
-
 <p>This package uses the JSON Web Token Python implementation, <a href="https://github.com/jpadilla/pyjwt">PyJWT</a> and allows to modify some of its available options.</p>
 <h3 id="jwt_secret_key">JWT_SECRET_KEY</h3>
 <p>This is the secret key used to sign the JWT. Make sure this is safe and not shared or public.</p>
@@ -351,9 +346,8 @@ easily changed by owner. Changing this value will make all tokens for given user
 <p>Can be a scalar or a dict.</p>
 <p>When a dict, the dict key is taken as the JWT key id and the values as
 the key, e.g.:</p>
-<pre><code class="python">{ &quot;kid&quot;: key }
+<pre><code class="language-python">{ &quot;kid&quot;: key }
 </code></pre>
-
 <p>The scalar or the dict value must be in any <a href="https://pyjwt.readthedocs.io/en/latest/algorithms.html">private key format supported by PyJWT</a>, for example of the types</p>
 <ul>
 <li><code>cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey</code></li>
@@ -471,7 +465,6 @@ You might want to implement your own handler if you use custom response serializ
 
     return response_payload
 </code></pre>
-
 <h3 id="jwt_auth_cookie">JWT_AUTH_COOKIE</h3>
 <p>You can set this to a string if you want to use http cookies in addition to the Authorization header as a valid transport for the token.
 The string you set here will be used as the cookie name that will be set in the response headers when requesting a token. The token validation
@@ -511,15 +504,14 @@ set <code>JWT_AUTH_COOKIE_SECURE</code> to <code>False.</code></p>
 <h2 id="extendingoverriding-jsonwebtokenauthentication">Extending/Overriding <code>JSONWebTokenAuthentication</code></h2>
 <p>Right now <code>JSONWebTokenAuthentication</code> assumes that the JWT will come in the header, or a cookie if configured (see <a href="#JWT_AUTH_COOKIE">JWT_AUTH_COOKIE</a>). The JWT spec does not require this (see: <a href="https://developer.atlassian.com/static/connect/docs/concepts/authentication.html">Making a service Call</a>). For example, the JWT may come in the querystring. The ability to send the JWT in the querystring is needed in cases where the user cannot set the header (for example the src element in HTML).</p>
 <p>To achieve this functionality, the user might write a custom <code>Authentication</code> class:</p>
-<pre><code class="python">class JSONWebTokenAuthenticationQS(JSONWebTokenAuthentication):
+<pre><code class="language-python">class JSONWebTokenAuthenticationQS(JSONWebTokenAuthentication):
 
     def get_jwt_value(self, request):
         return request.QUERY_PARAMS.get('jwt')
 </code></pre>
-
 <h2 id="creating-a-new-token-manually">Creating a new token manually</h2>
 <p>Sometimes you may want to manually generate a token, for example to return a token to the user immediately after account creation. You can do this as follows:</p>
-<pre><code class="python">from rest_framework_jwt.settings import api_settings
+<pre><code class="language-python">from rest_framework_jwt.settings import api_settings
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
@@ -527,6 +519,13 @@ jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 payload = jwt_payload_handler(user)
 token = jwt_encode_handler(payload)
 </code></pre>
+<h2 id="creating-a-new-token-on-the-command-line">Creating a new token on the command line</h2>
+<p>There is a management command which you can use to obtain a JWT token, for example:</p>
+<pre><code class="language-bash">python manage.py obtain_token username=John
+# or
+python manage.py obtain_token pk=1
+</code></pre>
+<p>it could be easier during development, to run this management command instead of using login API. </p>
               
             </div>
           </div>
@@ -566,5 +565,5 @@ token = jwt_encode_handler(payload)
 
 <!--
 MkDocs version : 0.13.2
-Build Date UTC : 2020-08-14 11:21:58.249097
+Build Date UTC : 2020-12-14 14:24:09.215171
 -->
