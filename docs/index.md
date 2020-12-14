@@ -557,6 +557,7 @@ class JSONWebTokenAuthenticationQS(JSONWebTokenAuthentication):
 
 Sometimes you may want to manually generate a token, for example to return a token to the user immediately after account creation. You can do this as follows:
 
+
 ```python
 from rest_framework_jwt.settings import api_settings
 
@@ -566,6 +567,19 @@ jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 payload = jwt_payload_handler(user)
 token = jwt_encode_handler(payload)
 ```
+
+
+## Creating a new token on the command line ##
+
+There is a management command which you can use to obtain a JWT token, for example:
+ 
+```bash
+python manage.py obtain_token username=John
+# or
+python manage.py obtain_token pk=1
+```
+it could be easier during development, to run this management command instead of using login API. 
+
 
 [jwt-auth-spec]: http://tools.ietf.org/html/draft-ietf-oauth-json-web-token
 [drf]: http://django-rest-framework.org/
