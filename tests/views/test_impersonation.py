@@ -24,7 +24,7 @@ def test_superuser_can_impersonate(
     token = response.json()["token"]
     payload = JSONWebTokenAuthentication.jwt_decode_token(token)
 
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_201_CREATED
     assert "token" in response.json()
     assert payload["user_id"] == user.id
 
@@ -99,7 +99,7 @@ def test_impersonation_sets_cookie(
     cookie_token = response.client.cookies.get(imp_cookie)
     cookie_payload = JSONWebTokenAuthentication.jwt_decode_token(cookie_token.value)
 
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_201_CREATED
     assert "token" in response.json()
     assert imp_cookie in response.client.cookies
     assert payload["user_id"] == user.id
