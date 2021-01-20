@@ -1,3 +1,5 @@
+import jwt
+
 from rest_framework.permissions import BasePermission
 
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
@@ -15,4 +17,6 @@ class IsNotBlacklisted(BasePermission):
         if token is None:
             return True
 
-        return not BlacklistedToken.is_blocked(token)
+        # The token should already be validated before we call this.
+        payload = jwt.decode(token, None, False)
+        return not BlacklistedToken.is_blocked(token, payload)
