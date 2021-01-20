@@ -48,4 +48,10 @@ class BlacklistTokenSerializer(serializers.ModelSerializer):
             'expires_at':
                 make_aware(datetime.utcfromtimestamp(expires_at_unix_time)),
         })
+
+        # Don't store the token if we can rely on token IDs.
+        # The token values are still sensitive until they expire.
+        if api_settings.JWT_TOKEN_ID == 'require':
+            del self.validated_data['token']
+
         return super(BlacklistTokenSerializer, self).save(**kwargs)
