@@ -203,12 +203,6 @@ def jwt_create_response_payload(
 def check_payload(token):
     from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
-    if apps.is_installed('rest_framework_jwt.blacklist'):
-        from rest_framework_jwt.blacklist.models import BlacklistedToken
-        if BlacklistedToken.is_blocked(token):
-            msg = _('Token is blacklisted.')
-            raise serializers.ValidationError(msg)
-
     try:
         payload = JSONWebTokenAuthentication.jwt_decode_token(token)
     except jwt.ExpiredSignature:
@@ -220,6 +214,12 @@ def check_payload(token):
     except jwt.InvalidTokenError:
         msg = _('Invalid token.')
         raise serializers.ValidationError(msg)
+
+    if apps.is_installed('rest_framework_jwt.blacklist'):
+        from rest_framework_jwt.blacklist.models import BlacklistedToken
+        if BlacklistedToken.is_blocked(token):
+            msg = _('Token is blacklisted.')
+            raise serializers.ValidationError(msg)
 
     return payload
 
