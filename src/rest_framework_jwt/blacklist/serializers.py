@@ -37,7 +37,13 @@ class BlacklistTokenSerializer(serializers.ModelSerializer):
         iat = payload.get('iat', unix_epoch())
         expires_at_unix_time = iat + api_settings.JWT_EXPIRATION_DELTA.total_seconds()
 
+        # For refreshed tokens, record the token id of the original token.
+        # This allows us to invalidate the whole family of tokens from
+        # the same original authentication event.
+        token_id = payload.get('orig_jti') or payload.get('jti')
+
         self.validated_data.update({
+            'token_id': token_id,
             'user': check_user(payload),
             'expires_at':
                 make_aware(datetime.utcfromtimestamp(expires_at_unix_time)),
