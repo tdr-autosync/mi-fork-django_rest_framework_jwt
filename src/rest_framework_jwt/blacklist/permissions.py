@@ -9,6 +9,10 @@ class IsNotBlacklisted(BasePermission):
     message = _('You have been blacklisted.')
 
     def has_permission(self, request, view):
-        return not BlacklistedToken.objects.filter(
-            token=JSONWebTokenAuthentication.get_token_from_request(request)
-        ).exists()
+        token = JSONWebTokenAuthentication.get_token_from_request(request)
+
+        # Don't check the blacklist for requests with no token.
+        if token is None:
+            return True
+
+        return not BlacklistedToken.objects.filter(token=token).exists()
