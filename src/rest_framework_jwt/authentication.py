@@ -70,7 +70,7 @@ class JSONWebTokenAuthentication(BaseAuthentication):
 
         if apps.is_installed('rest_framework_jwt.blacklist'):
             from rest_framework_jwt.blacklist.models import BlacklistedToken
-            if BlacklistedToken.objects.filter(token=force_str(token)).exists():
+            if BlacklistedToken.is_blocked(token):
                 msg = _('Token is blacklisted.')
                 raise exceptions.PermissionDenied(msg)
 

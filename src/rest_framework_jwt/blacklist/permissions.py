@@ -15,4 +15,4 @@ class IsNotBlacklisted(BasePermission):
         if token is None:
             return True
 
-        return not BlacklistedToken.objects.filter(token=token).exists()
+        return not BlacklistedToken.is_blocked(token)

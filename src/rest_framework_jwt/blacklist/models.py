@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
+from django.utils.encoding import force_str
 
 
 class BlacklistedTokenManager(models.Manager):
@@ -34,3 +35,8 @@ class BlacklistedToken(models.Model):
 
     def __str__(self):
         return 'Blacklisted token - {} - {}'.format(self.user, self.token)
+
+
+    @staticmethod
+    def is_blocked(token):
+        return BlacklistedToken.objects.filter(token=force_str(token)).exists()
