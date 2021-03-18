@@ -13,6 +13,17 @@ time.
 
 .. towncrier release notes start
 
+v1.17.3 (2021-03-18)
+====================
+
+Features
+--------
+
+- Apply 'blacklist' to any token from the same line of refreshed tokens as any invalidated token, where token ids are available.
+  Avoid storing whole auth tokens when JWT_TOKEN_ID setting is set to 'require'.
+  Please see notes in docs on migrating from JWT_TOKEN_ID 'allow' (the default) to 'require' (recommended). ([#84](https://github.com/Styria-Digital/django-rest-framework-jwt/pull/84))
+
+
 1.17.3 (2020-12-14)
 ====================
 
