@@ -265,6 +265,8 @@ urlpatterns = [
 </code></pre>
 <h3 id="delete_stale_tokens-management-command"><code>delete_stale_tokens</code> management command</h3>
 <p>When called, deletes all blacklisted tokens that have expired.</p>
+<h3 id="warning">Warning</h3>
+<p>Unless <code>JWT_TOKEN_ID</code> is set to <code>require</code>, blacklisting tokens will store the entire token value. This creates a potential problem if someone is able to read and delete records from the blacklist, either directly in the database or via the administrative interface. Note that the default value is <code>include</code>, not <code>require</code>. See the section on <code>JWT_TOKEN_ID</code> for how to migrate to requiring token id claims in all tokens.</p>
 <h2 id="additional-settings">Additional Settings</h2>
 <p>There are some additional settings that you can override similar to how you'd do it with Django REST framework itself. Here are all the available defaults.</p>
 <pre><code class="language-python">JWT_AUTH = {
@@ -402,6 +404,7 @@ have a <code>kid</code> header with a defined key.</p>
 <p>The default has been to include these claims since version 1.17.</p>
 <p>For new installations, please override the default and set this to <code>require</code>, as every token will have an id from the outset.</p>
 <p>For existing installations, when migrating from an older version (pre-1.17) or when changing the setting from <code>off</code>, we recommend setting this to <code>require</code> once all of the valid tokens have the id claims. This will typically be after <code>JWT_EXPIRATION_DELTA</code> has elapsed since upgrading or allowing id claims to be included.</p>
+<p>Note that when set to <code>off</code> or <code>include</code>, the blacklist functionality - if used - will store the entire token value, which would allow someone with access to the administrative interface, or directly to the database, to steal an otherwise valid token and remove it from the blacklist. Using <code>require</code> for this setting means that only token identifiers are recorded for the blacklist and not entire tokens.</p>
 <p>Default is <code>include</code>.</p>
 <h3 id="jwt_audience">JWT_AUDIENCE</h3>
 <p>This is a string that will be checked against the <code>aud</code> field of the token, if present.</p>
@@ -565,5 +568,5 @@ python manage.py obtain_token pk=1
 
 <!--
 MkDocs version : 0.13.2
-Build Date UTC : 2020-12-14 14:24:09.215171
+Build Date UTC : 2021-03-18 13:37:48.909186
 -->
