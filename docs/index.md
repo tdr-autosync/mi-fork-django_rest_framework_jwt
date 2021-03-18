@@ -201,6 +201,10 @@ urlpatterns = [
 
 When called, deletes all blacklisted tokens that have expired.
 
+### Warning
+
+Unless `JWT_TOKEN_ID` is set to `require`, blacklisting tokens will store the entire token value. This creates a potential problem if someone is able to read and delete records from the blacklist, either directly in the database or via the administrative interface. Note that the default value is `include`, not `require`. See the section on `JWT_TOKEN_ID` for how to migrate to requiring token id claims in all tokens.
+
 ## Additional Settings
 There are some additional settings that you can override similar to how you'd do it with Django REST framework itself. Here are all the available defaults.
 
@@ -368,6 +372,8 @@ The default has been to include these claims since version 1.17.
 For new installations, please override the default and set this to `require`, as every token will have an id from the outset.
 
 For existing installations, when migrating from an older version (pre-1.17) or when changing the setting from `off`, we recommend setting this to `require` once all of the valid tokens have the id claims. This will typically be after `JWT_EXPIRATION_DELTA` has elapsed since upgrading or allowing id claims to be included.
+
+Note that when set to `off` or `include`, the blacklist functionality - if used - will store the entire token value, which would allow someone with access to the administrative interface, or directly to the database, to steal an otherwise valid token and remove it from the blacklist. Using `require` for this setting means that only token identifiers are recorded for the blacklist and not entire tokens.
 
 Default is `include`.
 

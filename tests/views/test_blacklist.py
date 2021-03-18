@@ -59,6 +59,7 @@ def test_user_cannot_blacklist_same_token_multiple_times(
     assert response.status_code == status.HTTP_403_FORBIDDEN
     assert BlacklistedToken.objects.count() == 1
 
+
 def test_create_or_update_blacklist_entry(
     user, create_authenticated_client
 ):
@@ -74,6 +75,49 @@ def test_create_or_update_blacklist_entry(
 
     api_client.post(url, data={"token":token})
     assert BlacklistedToken.objects.count() == 1
+
+
+def test_blacklist_stores_token_id_and_token_when_including_ids(
+    monkeypatch, user, create_authenticated_client
+):
+    monkeypatch.setattr(api_settings, "JWT_TOKEN_ID", 'include')
+    url = reverse('blacklist-list')
+    api_client = create_authenticated_client(user)
+
+    api_client.post(url)
+    assert BlacklistedToken.objects.count() == 1
+    blacklist_entry = BlacklistedToken.objects.first()
+    assert blacklist_entry.token
+    assert blacklist_entry.token_id
+
+
+def test_blacklist_stores_token_id_and_no_token_when_requiring_ids(
+    monkeypatch, user, create_authenticated_client
+):
+    monkeypatch.setattr(api_settings, "JWT_TOKEN_ID", 'require')
+    url = reverse('blacklist-list')
+    api_client = create_authenticated_client(user)
+
+    api_client.post(url)
+    assert BlacklistedToken.objects.count() == 1
+    blacklist_entry = BlacklistedToken.objects.first()
+    assert blacklist_entry.token is None
+    assert blacklist_entry.token_id
+
+
+def test_blacklist_stores_token_and_no_id_token_when_ids_turned_off(
+    monkeypatch, user, create_authenticated_client
+):
+    monkeypatch.setattr(api_settings, "JWT_TOKEN_ID", 'off')
+    url = reverse('blacklist-list')
+    api_client = create_authenticated_client(user)
+
+    api_client.post(url)
+    assert BlacklistedToken.objects.count() == 1
+    blacklist_entry = BlacklistedToken.objects.first()
+    assert blacklist_entry.token
+    assert blacklist_entry.token_id is None
+
 
 def test_user_can_blacklist_own_token_from_cookie(
     monkeypatch, user, call_auth_endpoint

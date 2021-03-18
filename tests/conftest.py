@@ -6,6 +6,7 @@ import pytest
 
 from django.contrib.auth import get_user_model
 
+from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
@@ -80,3 +81,13 @@ def create_user(db):
         return User.objects.create_user(**kwargs)
 
     return _create_user
+
+
+@pytest.fixture
+def call_auth_refresh_endpoint(api_client, db):
+    def _call_auth_refresh_endpoint(token):
+        url = reverse("auth-refresh")
+        data = {"token": token}
+        return api_client.post(path=url, data=data)
+
+    return _call_auth_refresh_endpoint

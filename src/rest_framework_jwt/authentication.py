@@ -68,12 +68,6 @@ class JSONWebTokenAuthentication(BaseAuthentication):
         except MissingToken:
             return None
 
-        if apps.is_installed('rest_framework_jwt.blacklist'):
-            from rest_framework_jwt.blacklist.models import BlacklistedToken
-            if BlacklistedToken.objects.filter(token=force_str(token)).exists():
-                msg = _('Token is blacklisted.')
-                raise exceptions.PermissionDenied(msg)
-
         try:
             payload = self.jwt_decode_token(token)
         except jwt.ExpiredSignature:
@@ -85,6 +79,12 @@ class JSONWebTokenAuthentication(BaseAuthentication):
         except jwt.InvalidTokenError:
             msg = _('Invalid token.')
             raise exceptions.AuthenticationFailed(msg)
+
+        if apps.is_installed('rest_framework_jwt.blacklist'):
+            from rest_framework_jwt.blacklist.models import BlacklistedToken
+            if BlacklistedToken.is_blocked(token, payload):
+                msg = _('Token is blacklisted.')
+                raise exceptions.PermissionDenied(msg)
 
         user = self.authenticate_credentials(payload)
 
