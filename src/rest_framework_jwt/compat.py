@@ -6,6 +6,7 @@ from datetime import datetime
 import sys
 
 from django import VERSION
+import jwt
 
 from .settings import api_settings
 
@@ -52,3 +53,24 @@ def set_cookie_with_token(response, name, token):
         params.update({'samesite': api_settings.JWT_AUTH_COOKIE_SAMESITE})
 
     response.set_cookie(name, token, **params)
+
+
+if jwt.__version__.startswith("2"):
+    jwt_version = 2
+    ExpiredSignature = jwt.ExpiredSignatureError    
+else:
+    jwt_version = 1
+    ExpiredSignature = jwt.ExpiredSignature
+
+def jwt_decode(token, key, verify=None, **kwargs):
+    if verify is not None:
+        if jwt_version == 1:
+            kwargs["verify"] = verify
+        else:
+            if "options" not in kwargs:
+                kwargs["options"] = {"verify_signature": verify}
+            else:
+                kwargs["options"]["verify_signature"] = verify
+    if jwt_version == 2 and "algorithms" not in kwargs:
+        kwargs["algorithms"] = ["HS256"]
+    return jwt.decode(token, key, **kwargs)

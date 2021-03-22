@@ -14,7 +14,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.utils.encoders import JSONEncoder
 
-from rest_framework_jwt.compat import gettext_lazy as _
+from rest_framework_jwt.compat import gettext_lazy as _, jwt_version, jwt_decode, ExpiredSignature
 from rest_framework_jwt.settings import api_settings
 
 
@@ -126,11 +126,17 @@ def jwt_encode_payload(payload):
     elif isinstance(key,list):
         key = key[0]
 
-    return jwt.encode(payload, key, signing_algorithm, headers=headers, json_encoder=JSONEncoder).decode()
+    enc = jwt.encode(payload, key, signing_algorithm, headers=headers, json_encoder=JSONEncoder)
+    if jwt_version == 1:
+        enc = enc.decode()
+    return enc
 
 
 def jwt_decode_token(token):
     """Decode JWT token claims."""
+
+    if jwt_version == 2 and type(token) == bytes:
+        token = token.decode()
 
     options = {
         'verify_exp': api_settings.JWT_VERIFY_EXPIRATION,
@@ -149,7 +155,7 @@ def jwt_decode_token(token):
 
     keys = None
     if alg_hdr.startswith("HS"):
-        unverified_payload = jwt.decode(token, None, False)
+        unverified_payload = jwt_decode(token, key=None, verify=False)
         keys = jwt_get_secret_key(unverified_payload)
     else:
         keys = api_settings.JWT_PUBLIC_KEY
@@ -174,8 +180,8 @@ def jwt_decode_token(token):
     ex = None
     for key in keys:
         try:
-            return jwt.decode(
-                token, key, api_settings.JWT_VERIFY, options=options,
+            return jwt_decode(
+                token, key, verify=api_settings.JWT_VERIFY, options=options,
                 leeway=api_settings.JWT_LEEWAY,
                 audience=api_settings.JWT_AUDIENCE,
                 issuer=api_settings.JWT_ISSUER, algorithms=[alg_hdr]
@@ -205,7 +211,7 @@ def check_payload(token):
 
     try:
         payload = JSONWebTokenAuthentication.jwt_decode_token(token)
-    except jwt.ExpiredSignature:
+    except ExpiredSignature:
         msg = _('Token has expired.')
         raise serializers.ValidationError(msg)
     except jwt.DecodeError:
