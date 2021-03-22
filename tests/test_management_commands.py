@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.core.management import call_command
-from django.utils.six import StringIO
+from six import StringIO
 from pytest import raises
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
