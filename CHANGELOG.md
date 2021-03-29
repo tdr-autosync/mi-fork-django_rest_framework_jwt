@@ -13,6 +13,15 @@ time.
 
 .. towncrier release notes start
 
+v1.18.0 (2021-03-29)
+====================
+
+Features
+--------
+
+- Adds PyJWT 2.x support. Note that this is only supported on Python 3.6+ as PyJWT 2.x only supports that. PyJWT 1.x is also still supported and continues to work on the same set of Python versions as before. ([#91](https://github.com/Styria-Digital/django-rest-framework-jwt/pull/91))
+
+
 1.18.0 (2021-03-18)
 ====================
 
