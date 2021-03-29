@@ -20,6 +20,7 @@ from rest_framework_jwt.blacklist.exceptions import (
 )
 from rest_framework_jwt.compat import gettext_lazy as _
 from rest_framework_jwt.compat import smart_str
+from rest_framework_jwt.compat import ExpiredSignature
 from rest_framework_jwt.settings import api_settings
 
 
@@ -70,7 +71,7 @@ class JSONWebTokenAuthentication(BaseAuthentication):
 
         try:
             payload = self.jwt_decode_token(token)
-        except jwt.ExpiredSignature:
+        except ExpiredSignature:
             msg = _('Token has expired.')
             raise exceptions.AuthenticationFailed(msg)
         except jwt.DecodeError:

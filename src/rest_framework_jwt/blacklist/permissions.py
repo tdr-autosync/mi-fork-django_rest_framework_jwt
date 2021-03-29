@@ -1,11 +1,8 @@
-import jwt
-
 from rest_framework.permissions import BasePermission
 
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.blacklist.models import BlacklistedToken
-from rest_framework_jwt.compat import gettext_lazy as _
-
+from rest_framework_jwt.compat import gettext_lazy as _, jwt_decode
 
 class IsNotBlacklisted(BasePermission):
     message = _('You have been blacklisted.')
@@ -18,5 +15,5 @@ class IsNotBlacklisted(BasePermission):
             return True
 
         # The token should already be validated before we call this.
-        payload = jwt.decode(token, None, False)
+        payload = jwt_decode(token, None, verify=False)
         return not BlacklistedToken.is_blocked(token, payload)
