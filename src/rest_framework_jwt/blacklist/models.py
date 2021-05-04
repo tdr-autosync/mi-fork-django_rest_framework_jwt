@@ -36,7 +36,7 @@ class BlacklistedToken(models.Model):
     objects = BlacklistedTokenManager()
 
     def __str__(self):
-        return 'Blacklisted token - {} - {}'.format(self.user, self.token)
+        return 'Blacklisted token - {} - {}'.format(self.user, self.expires_at)
 
 
     @staticmethod
