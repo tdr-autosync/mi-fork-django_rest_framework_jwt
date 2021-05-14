@@ -11,7 +11,7 @@ def add_token_id_values(apps, schema_editor):
     """
     BlacklistedToken = apps.get_model('blacklist', 'BlacklistedToken')
     for row in BlacklistedToken.objects.filter(token_id=None):
-        payload = jwt.decode(row.token)
+        payload = jwt.decode(row.token, None, options={'verify_signature': False})
         token_id = payload.get('orig_jti') or payload.get('jti')
         if token_id:
             row.token_id = token_id
