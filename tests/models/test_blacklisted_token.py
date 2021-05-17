@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 from datetime import timedelta
 from django.utils import timezone
 
@@ -100,3 +101,19 @@ def test_token_is_not_blocked_by_id_when_ids_disabled(user, monkeypatch):
     ).save()
 
     assert BlacklistedToken.is_blocked(token, payload) is False
+
+
+
+def test_token_has_expected_string_representation(user):
+    payload = JSONWebTokenAuthentication.jwt_create_payload(user)
+    token = JSONWebTokenAuthentication.jwt_encode_payload(payload)
+
+    expiration = datetime(2021, 11, 1, 12, 34, 56, 123456, tzinfo=timezone.utc)
+    banned_token = BlacklistedToken(
+        token=token,
+        token_id=payload['jti'],
+        expires_at=expiration,
+        user=user,
+    )
+
+    assert str(banned_token) == 'Blacklisted token - username - 2021-11-01 12:34:56.123456+00:00'
