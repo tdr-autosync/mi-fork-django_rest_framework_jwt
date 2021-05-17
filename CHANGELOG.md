@@ -332,6 +332,12 @@ Misc
 1.12.8 (2018-12-21)
 ====================
 
+Breaking Changes
+----------------
+
+- The default configuration of `JWT_AUTH_HEADER_PREFIX` was changed from `JWT` to `Bearer`. Add `"JWT_AUTH_HEADER_PREFIX": "JWT",` to your `JWT_AUTH` if want to keep the previous behavior.
+
+
 Misc
 ----
 
