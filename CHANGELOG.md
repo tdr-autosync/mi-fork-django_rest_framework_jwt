@@ -13,6 +13,15 @@ time.
 
 .. towncrier release notes start
 
+v1.19.0 (2021-05-18)
+====================
+
+Bugfixes
+--------
+
+- Fix broken migration for 'blacklisted' token ids. The migration released in v1.18.0 would fail if you had any existing blacklisted tokens. ([#94](https://github.com/Styria-Digital/django-rest-framework-jwt/pull/94))
+
+
 1.19.0 (2021-03-29)
 ====================
 
