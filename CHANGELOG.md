@@ -13,6 +13,15 @@ time.
 
 .. towncrier release notes start
 
+v1.19.1 (2022-01-08)
+====================
+
+Bugfixes
+--------
+
+- Fixed usage of deprecated functions for python 3.10, djangorestframework 3.13, and django 4.0 ([#107](https://github.com/Styria-Digital/django-rest-framework-jwt/pull/107))
+
+
 1.19.1 (2021-05-18)
 ====================
 
