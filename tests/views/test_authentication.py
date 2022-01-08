@@ -7,7 +7,11 @@ from base64 import b64encode
 from collections import OrderedDict
 
 from django.utils.encoding import force_str
-from django.utils.translation import ugettext_lazy as _
+
+try:
+    from django.utils.translation import ugettext_lazy as _
+except ImportError:
+    from django.utils.translation import gettext_lazy as _
 
 from jwt import get_unverified_header
 from jwt.exceptions import InvalidAlgorithmError, InvalidSignatureError, InvalidTokenError
